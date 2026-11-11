@@ -626,3 +626,192 @@
         grid-column: 1 / -1;
     }
 }
+
+/* ========================================
+   MÓDULO DE USUARIOS
+======================================== */
+
+/* Formulario de edición */
+
+.admin-user-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    padding: 2.5vh 2vw;
+    margin-bottom: 3vh;
+    background-color: #FAF8F4;
+    border: 0.1vw solid #D8C9B5;
+    border-radius: 0.5vw;
+}
+
+.admin-user-form h3 {
+    margin: 0 0 1vh;
+    font-size: 1.3vw;
+}
+
+.admin-user-form label {
+    font-size: 1vw;
+    font-weight: bold;
+}
+
+.admin-user-form input {
+    width: 100%;
+    padding: 1.5vh 1vw;
+    box-sizing: border-box;
+    border: 0.1vw solid #C8BBA9;
+    border-radius: 0.3vw;
+    outline: none;
+    font-family: inherit;
+    font-size: 1vw;
+    color: #211D1B;
+    background-color: #FFFFFF;
+}
+
+.admin-user-form input:focus {
+    border-color: #C69B61;
+}
+
+.admin-user-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2vw;
+}
+
+.admin-user-form-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+}
+
+/* Buscador */
+
+.admin-user-search {
+    width: 100%;
+    margin-bottom: 2.5vh;
+}
+
+.admin-user-search input {
+    width: 100%;
+    padding: 1.5vh 1vw;
+    box-sizing: border-box;
+    border: 0.1vw solid #C8BBA9;
+    border-radius: 0.3vw;
+    outline: none;
+    font-family: inherit;
+    font-size: 1vw;
+    background-color: #FFFFFF;
+    color: #211D1B;
+}
+
+.admin-user-search input:focus {
+    border-color: #C69B61;
+}
+
+/* Listado */
+
+.admin-user-list {
+    width: 100%;
+}
+
+.admin-user-table {
+    width: 100%;
+}
+
+.admin-user-row {
+    display: grid;
+    grid-template-columns: 1.3fr 1.5fr 1fr 1.3fr 1.5fr;
+    align-items: center;
+    gap: 1vw;
+    min-height: 9vh;
+    padding: 1.5vh 1vw;
+    box-sizing: border-box;
+    border-bottom: 0.1vw solid #E8E1D8;
+    font-size: 0.85vw;
+    overflow-wrap: anywhere;
+}
+
+.admin-user-heading {
+    min-height: 5vh;
+    background-color: #F2EDE4;
+    border-radius: 0.3vw;
+    font-weight: bold;
+}
+
+.admin-user-name {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5vh;
+}
+
+.admin-user-name strong {
+    font-size: 0.95vw;
+    color: #211D1B;
+}
+
+.admin-user-name small {
+    font-size: 0.75vw;
+    color: #75695D;
+}
+
+/* Responsive */
+
+@media (max-width: 700px) {
+
+    .admin-user-form {
+        padding: 2.5vh 3vw;
+        border-radius: 1vw;
+    }
+
+    .admin-user-form h3 {
+        font-size: 3.5vw;
+    }
+
+    .admin-user-form label {
+        font-size: 2.8vw;
+    }
+
+    .admin-user-form input {
+        padding: 1.5vh 2vw;
+        border-radius: 1vw;
+        font-size: 2.8vw;
+    }
+
+    .admin-user-form-row {
+        grid-template-columns: 1fr;
+        gap: 1.5vh;
+    }
+
+    .admin-user-search input {
+        padding: 1.5vh 2vw;
+        border-radius: 1vw;
+        font-size: 2.7vw;
+    }
+
+    .admin-user-heading {
+        display: none;
+    }
+
+    .admin-user-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5vh 2vw;
+        padding: 2vh 2vw;
+        font-size: 2.6vw;
+    }
+
+    .admin-user-name {
+        grid-column: 1 / -1;
+    }
+
+    .admin-user-name strong {
+        font-size: 3vw;
+    }
+
+    .admin-user-name small {
+        font-size: 2.4vw;
+    }
+
+    .admin-user-row .admin-category-actions {
+        grid-column: 1 / -1;
+        flex-wrap: wrap;
+    }
+}

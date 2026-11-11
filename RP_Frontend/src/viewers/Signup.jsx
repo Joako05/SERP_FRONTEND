@@ -1,6 +1,11 @@
 
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import {
+    obtenerUsuarios,
+    guardarUsuarios,
+    generarIdUsuario
+} from "../data/Usuarios";
 
 class Signup extends Component {
     constructor(props) {
@@ -75,22 +80,70 @@ class Signup extends Component {
         return null;
     };
 
-    handleSubmit = (e) => {
-        e.preventDefault();
 
-        const error = this.validarFormulario();
+handleSubmit = (e) => {
+    e.preventDefault();
 
-        if (error) {
-            this.setState({ error, exito: "" });
-            return;
-        }
+    const error = this.validarFormulario();
 
-        // Simulación local: todavía no se registra ningún usuario.
+    if (error) {
+        this.setState({ error, exito: "" });
+        return;
+    }
+
+    const {
+        nombre,
+        apellido,
+        correo,
+        telefono,
+        direccion
+    } = this.state;
+
+    const usuariosActuales = obtenerUsuarios();
+
+    const correoNormalizado = correo.trim().toLowerCase();
+
+    const correoExistente = usuariosActuales.some(
+        usuario => usuario.correo.toLowerCase() === correoNormalizado
+    );
+
+    if (correoExistente) {
         this.setState({
-            error: "",
-            exito: "¡Formulario validado correctamente! El registro estará disponible próximamente."
+            error: "Ya existe una cuenta registrada con ese correo electrónico.",
+            exito: ""
         });
+        return;
+    }
+
+    const nuevoUsuario = {
+        id: generarIdUsuario(usuariosActuales),
+        nombre: nombre.trim(),
+        apellido: apellido.trim(),
+        correo: correoNormalizado,
+        telefono: telefono.trim(),
+        direccion: direccion.trim()
     };
+
+    const nuevosUsuarios = [
+        ...usuariosActuales,
+        nuevoUsuario
+    ];
+
+    const guardado = guardarUsuarios(nuevosUsuarios);
+
+    if (!guardado) {
+        this.setState({
+            error: "No se pudo completar el registro. Intentá nuevamente.",
+            exito: ""
+        });
+        return;
+    }
+
+    this.setState({
+        error: "",
+        exito: "¡Tu cuenta fue registrada correctamente! Ya podés iniciar sesión."
+    });
+};
 
     render() {
         const {

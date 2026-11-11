@@ -5,7 +5,12 @@ import {
     guardarProductos,
     generarIdProducto
 } from "../data/Productos";
+import {
+    obtenerUsuarios,
+    guardarUsuarios
+} from "../data/Usuarios";
 import "./PanelAdmin.css";
+
 
 import {
   obtenerCategorias,
@@ -17,33 +22,43 @@ class PanelAdmin extends Component {
     super(props);
 
     this.state = {
-        
-      moduloActivo: "usuarios",
-      categorias: [],
-      mostrarFormularioCategoria: false,
-      nombreCategoria: "",
-      categoriaEditandoId: null,
-      errorCategoria: "",
-      productos: [],
-    mostrarFormularioProducto: false,
-    productoEditandoId: null,
-    nombreProducto: "",
-    categoriaProducto: "",
-    descripcionProducto: "",
-    precioProducto: "",
-    stockProducto: "",
-    imagenProducto: "",
-    errorProducto: ""
+            
+        moduloActivo: "usuarios",
+        categorias: [],
+        mostrarFormularioCategoria: false,
+        nombreCategoria: "",
+        categoriaEditandoId: null,
+        errorCategoria: "",
+        productos: [],
+        mostrarFormularioProducto: false,
+        productoEditandoId: null,
+        nombreProducto: "",
+        categoriaProducto: "",
+        descripcionProducto: "",
+        precioProducto: "",
+        stockProducto: "",
+        imagenProducto: "",
+        errorProducto: "",
+        usuarios: [],
+        busquedaUsuario: "",
+        mostrarFormularioUsuario: false,
+        usuarioEditandoId: null,
+        nombreUsuario: "",
+        apellidoUsuario: "",
+        correoUsuario: "",
+        telefonoUsuario: "",
+        direccionUsuario: "",
+        errorUsuario: ""
     };
   }
 
 componentDidMount() {
     this.setState({
         categorias: obtenerCategorias(),
-        productos: obtenerProductos()
+        productos: obtenerProductos(),
+        usuarios: obtenerUsuarios()
     });
 }
-
   cambiarModulo = (modulo) => {
     this.setState({
       moduloActivo: modulo,
@@ -395,25 +410,380 @@ eliminarProducto = (id) => {
     });
 };
 
-  renderUsuarios() {
-    return (
-      <div className="admin-module-content">
-        <div className="admin-module-header">
-          <div>
-            <h2>Usuarios</h2>
-            <p>Administrá los usuarios registrados en Retro Passion.</p>
-          </div>
-        </div>
 
-        <div className="admin-empty-state">
-          <h3>Listado de usuarios</h3>
-          <p>
-            Aquí aparecerán los usuarios registrados en la tienda.
-          </p>
-        </div>
-      </div>
+abrirFormularioUsuario = (usuario) => {
+    this.setState({
+        mostrarFormularioUsuario: true,
+        usuarioEditandoId: usuario.id,
+        nombreUsuario: usuario.nombre,
+        apellidoUsuario: usuario.apellido,
+        correoUsuario: usuario.correo,
+        telefonoUsuario: usuario.telefono,
+        direccionUsuario: usuario.direccion,
+        errorUsuario: ""
+    });
+};
+
+cerrarFormularioUsuario = () => {
+    this.setState({
+        mostrarFormularioUsuario: false,
+        usuarioEditandoId: null,
+        nombreUsuario: "",
+        apellidoUsuario: "",
+        correoUsuario: "",
+        telefonoUsuario: "",
+        direccionUsuario: "",
+        errorUsuario: ""
+    });
+};
+
+guardarUsuario = (event) => {
+    event.preventDefault();
+
+    const {
+        nombreUsuario,
+        apellidoUsuario,
+        correoUsuario,
+        telefonoUsuario,
+        direccionUsuario,
+        usuarioEditandoId,
+        usuarios
+    } = this.state;
+
+    const nombre = nombreUsuario.trim();
+    const apellido = apellidoUsuario.trim();
+    const correo = correoUsuario.trim().toLowerCase();
+    const telefono = telefonoUsuario.trim();
+    const direccion = direccionUsuario.trim();
+
+    if (!nombre || !apellido || !correo || !telefono || !direccion) {
+        this.setState({
+            errorUsuario: "Todos los campos son obligatorios."
+        });
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!emailRegex.test(correo)) {
+        this.setState({
+            errorUsuario: "Ingresá un correo electrónico válido."
+        });
+        return;
+    }
+
+    const telefonoRegex = /^[0-9+\s()-]{8,20}$/;
+
+    if (!telefonoRegex.test(telefono)) {
+        this.setState({
+            errorUsuario: "Ingresá un número de teléfono válido."
+        });
+        return;
+    }
+
+    const correoDuplicado = usuarios.some(
+        usuario =>
+            usuario.correo.toLowerCase() === correo &&
+            usuario.id !== usuarioEditandoId
     );
-  }
+
+    if (correoDuplicado) {
+        this.setState({
+            errorUsuario: "Ya existe otro usuario con ese correo electrónico."
+        });
+        return;
+    }
+
+    const nuevosUsuarios = usuarios.map(usuario =>
+        usuario.id === usuarioEditandoId
+            ? {
+                ...usuario,
+                nombre,
+                apellido,
+                correo,
+                telefono,
+                direccion
+            }
+            : usuario
+    );
+
+    const guardado = guardarUsuarios(nuevosUsuarios);
+
+    if (!guardado) {
+        this.setState({
+            errorUsuario: "No se pudieron guardar los cambios."
+        });
+        return;
+    }
+
+    this.setState({
+        usuarios: nuevosUsuarios,
+        mostrarFormularioUsuario: false,
+        usuarioEditandoId: null,
+        nombreUsuario: "",
+        apellidoUsuario: "",
+        correoUsuario: "",
+        telefonoUsuario: "",
+        direccionUsuario: "",
+        errorUsuario: ""
+    });
+};
+
+eliminarUsuario = (id) => {
+    const confirmar = window.confirm(
+        "¿Estás seguro de que querés eliminar este usuario?"
+    );
+
+    if (!confirmar) return;
+
+    const nuevosUsuarios = this.state.usuarios.filter(
+        usuario => usuario.id !== id
+    );
+
+    const guardado = guardarUsuarios(nuevosUsuarios);
+
+    if (!guardado) {
+        window.alert("No se pudo eliminar el usuario.");
+        return;
+    }
+
+    this.setState({
+        usuarios: nuevosUsuarios
+    });
+
+    if (this.state.usuarioEditandoId === id) {
+        this.cerrarFormularioUsuario();
+    }
+};
+
+
+
+
+renderUsuarios() {
+    const {
+        usuarios,
+        busquedaUsuario,
+        mostrarFormularioUsuario,
+        nombreUsuario,
+        apellidoUsuario,
+        correoUsuario,
+        telefonoUsuario,
+        direccionUsuario,
+        errorUsuario
+    } = this.state;
+
+    const usuariosFiltrados = usuarios.filter(usuario => {
+        const busqueda = busquedaUsuario.toLowerCase().trim();
+
+        const nombreCompleto = `${usuario.nombre} ${usuario.apellido}`.toLowerCase();
+
+        return (
+            nombreCompleto.includes(busqueda) ||
+            usuario.correo.toLowerCase().includes(busqueda) ||
+            usuario.telefono.includes(busqueda)
+        );
+    });
+
+    return (
+        <div className="admin-module-content">
+
+            <div className="admin-module-header">
+                <div>
+                    <h2>Usuarios</h2>
+                    <p>Administrá los usuarios registrados en Retro Passion.</p>
+                </div>
+            </div>
+
+            {mostrarFormularioUsuario && (
+                <form
+                    className="admin-user-form"
+                    onSubmit={this.guardarUsuario}
+                >
+                    <h3>Editar usuario</h3>
+
+                    <div className="admin-user-form-row">
+                        <div>
+                            <label htmlFor="nombreUsuario">Nombre</label>
+                            <input
+                                id="nombreUsuario"
+                                type="text"
+                                value={nombreUsuario}
+                                onChange={event => this.setState({
+                                    nombreUsuario: event.target.value,
+                                    errorUsuario: ""
+                                })}
+                                maxLength="60"
+                                required
+                            />
+                        </div>
+
+                        <div>
+                            <label htmlFor="apellidoUsuario">Apellido</label>
+                            <input
+                                id="apellidoUsuario"
+                                type="text"
+                                value={apellidoUsuario}
+                                onChange={event => this.setState({
+                                    apellidoUsuario: event.target.value,
+                                    errorUsuario: ""
+                                })}
+                                maxLength="60"
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    <label htmlFor="correoUsuario">Correo electrónico</label>
+                    <input
+                        id="correoUsuario"
+                        type="email"
+                        value={correoUsuario}
+                        onChange={event => this.setState({
+                            correoUsuario: event.target.value,
+                            errorUsuario: ""
+                        })}
+                        required
+                    />
+
+                    <label htmlFor="telefonoUsuario">Teléfono</label>
+                    <input
+                        id="telefonoUsuario"
+                        type="tel"
+                        value={telefonoUsuario}
+                        onChange={event => this.setState({
+                            telefonoUsuario: event.target.value,
+                            errorUsuario: ""
+                        })}
+                        required
+                    />
+
+                    <label htmlFor="direccionUsuario">Dirección</label>
+                    <input
+                        id="direccionUsuario"
+                        type="text"
+                        value={direccionUsuario}
+                        onChange={event => this.setState({
+                            direccionUsuario: event.target.value,
+                            errorUsuario: ""
+                        })}
+                        required
+                    />
+
+                    {errorUsuario && (
+                        <p className="admin-category-error">
+                            {errorUsuario}
+                        </p>
+                    )}
+
+                    <div className="admin-form-actions">
+                        <button
+                            type="submit"
+                            className="admin-save-button"
+                        >
+                            Guardar cambios
+                        </button>
+
+                        <button
+                            type="button"
+                            className="admin-cancel-button"
+                            onClick={this.cerrarFormularioUsuario}
+                        >
+                            Cancelar
+                        </button>
+                    </div>
+                </form>
+            )}
+
+            <div className="admin-user-list">
+
+                <div className="admin-list-title">
+                    <h3>Listado de usuarios</h3>
+                    <span>{usuarios.length} usuarios</span>
+                </div>
+
+                <div className="admin-user-search">
+                    <input
+                        type="text"
+                        placeholder="Buscar por nombre, correo o teléfono..."
+                        value={busquedaUsuario}
+                        onChange={event => this.setState({
+                            busquedaUsuario: event.target.value
+                        })}
+                    />
+                </div>
+
+                {usuariosFiltrados.length > 0 ? (
+
+                    <div className="admin-user-table">
+
+                        <div className="admin-user-row admin-user-heading">
+                            <span>Usuario</span>
+                            <span>Correo</span>
+                            <span>Teléfono</span>
+                            <span>Dirección</span>
+                            <span>Acciones</span>
+                        </div>
+
+                        {usuariosFiltrados.map(usuario => (
+                            <div
+                                className="admin-user-row"
+                                key={usuario.id}
+                            >
+                                <div className="admin-user-name">
+                                    <strong>
+                                        {usuario.nombre} {usuario.apellido}
+                                    </strong>
+                                    <small>ID: {usuario.id}</small>
+                                </div>
+
+                                <span>{usuario.correo}</span>
+
+                                <span>{usuario.telefono}</span>
+
+                                <span>{usuario.direccion}</span>
+
+                                <div className="admin-category-actions">
+                                    <button
+                                        className="admin-edit-button"
+                                        onClick={() => this.abrirFormularioUsuario(usuario)}
+                                    >
+                                        Editar
+                                    </button>
+
+                                    <button
+                                        className="admin-delete-button"
+                                        onClick={() => this.eliminarUsuario(usuario.id)}
+                                    >
+                                        Eliminar
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
+
+                    </div>
+
+                ) : (
+                    <div className="admin-empty-state">
+                        <h3>
+                            {usuarios.length === 0
+                                ? "No hay usuarios registrados"
+                                : "No se encontraron usuarios"}
+                        </h3>
+
+                        <p>
+                            {usuarios.length === 0
+                                ? "Los usuarios que creen una cuenta aparecerán en este listado."
+                                : "Probá con otro nombre, correo o teléfono."}
+                        </p>
+                    </div>
+                )}
+
+            </div>
+
+        </div>
+    );
+}
+
 
   renderCategorias() {
     const {
