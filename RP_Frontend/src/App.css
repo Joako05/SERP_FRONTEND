@@ -2589,3 +2589,174 @@ body {
         height: 5vw;
     }
 }
+
+/* =================================
+   PERFIL DEL USUARIO
+================================= */
+
+.perfil-container {
+    width: 100%;
+    min-height: 75vh;
+    padding: 6vh 8vw;
+    box-sizing: border-box;
+    background-color: #F5EBDD;
+}
+
+.perfil-content {
+    width: 100%;
+    max-width: 75vw;
+    margin: 0 auto;
+}
+
+/* ENCABEZADO */
+
+.perfil-header {
+    margin-bottom: 5vh;
+}
+
+.perfil-header h1 {
+    margin: 0 0 1.5vh;
+    color: #211D1B;
+    font-size: 2.2vw;
+}
+
+.perfil-header p {
+    margin: 0;
+    color: #77716B;
+    font-size: 1.1vw;
+}
+
+/* SECCIONES */
+
+.perfil-section {
+    width: 100%;
+    margin-bottom: 3vh;
+    padding: 3vh 3vw;
+    box-sizing: border-box;
+    background-color: #FFFFFF;
+    border: 0.08vw solid #E5D9C9;
+    border-radius: 0.8vw;
+}
+
+.perfil-section-header {
+    margin-bottom: 3vh;
+    padding-bottom: 2vh;
+    border-bottom: 0.08vw solid #E5D9C9;
+}
+
+.perfil-section-header h2 {
+    margin: 0;
+    color: #211D1B;
+    font-size: 1.4vw;
+}
+
+/* DATOS */
+
+.perfil-data-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 3vh 3vw;
+}
+
+.perfil-data-item {
+    display: flex;
+    flex-direction: column;
+    gap: 1vh;
+    min-width: 0;
+}
+
+.perfil-data-item span {
+    color: #81776C;
+    font-size: 0.95vw;
+}
+
+.perfil-data-item strong {
+    color: #211D1B;
+    font-size: 1.15vw;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+}
+
+.perfil-data-full {
+    grid-column: 1 / -1;
+}
+
+/* BOTÓN INFERIOR */
+
+.perfil-footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 4vh;
+}
+
+.perfil-back-button {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5vh 2.5vw;
+    background-color: #211D1B;
+    color: #F2D5A0;
+    border-radius: 0.5vw;
+    text-decoration: none;
+    font-size: 1vw;
+    transition: background-color 0.2s ease;
+}
+
+.perfil-back-button:hover {
+    background-color: #443A33;
+}
+
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 700px) {
+
+    .perfil-container {
+        padding: 5vh 5vw;
+    }
+
+    .perfil-content {
+        max-width: 100%;
+    }
+
+    .perfil-header h1 {
+        font-size: 4.5vw;
+    }
+
+    .perfil-header p {
+        font-size: 2.5vw;
+    }
+
+    .perfil-section {
+        padding: 3vh 4vw;
+        border-radius: 1.5vw;
+    }
+
+    .perfil-section-header h2 {
+        font-size: 3.5vw;
+    }
+
+    .perfil-data-grid {
+        grid-template-columns: 1fr;
+        gap: 2.5vh;
+    }
+
+    .perfil-data-item span {
+        font-size: 2.5vw;
+    }
+
+    .perfil-data-item strong {
+        font-size: 3vw;
+    }
+
+    .perfil-data-full {
+        grid-column: auto;
+    }
+
+    .perfil-back-button {
+        padding: 1.5vh 5vw;
+        font-size: 2.5vw;
+    }
+}
