@@ -1,0 +1,628 @@
+
+.admin-container {
+  width: 100%;
+  min-height: 75vh;
+  padding: 4vh 5vw;
+  box-sizing: border-box;
+  background-color: #F5F0E6;
+  color: #211D1B;
+}
+
+/* Navegación entre módulos */
+
+.admin-navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 1.5vw;
+  margin-bottom: 4vh;
+}
+
+.admin-navigation button {
+  width: 17vw;
+  min-height: 7vh;
+  border: 0.12vw solid #211D1B;
+  border-radius: 0.5vw;
+  background-color: #211D1B;
+  color: #F2D5A0;
+  font-size: 1.15vw;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.admin-navigation button:hover {
+  background-color: #493A2F;
+}
+
+.admin-navigation button.active {
+  background-color: #C69B61;
+  color: #211D1B;
+  border-color: #C69B61;
+}
+
+/* Bienvenida */
+
+.admin-welcome {
+  padding: 3vh 3vw;
+  margin-bottom: 3vh;
+  background-color: #211D1B;
+  color: #F2D5A0;
+  border-radius: 0.6vw;
+}
+
+.admin-welcome h1 {
+  margin: 0 0 1.2vh;
+  font-size: 2vw;
+}
+
+.admin-welcome p {
+  margin: 0;
+  font-size: 1.1vw;
+}
+
+/* Contenido de cada módulo */
+
+.admin-content {
+  min-height: 35vh;
+  padding: 2.5vh 2.5vw;
+  background-color: #FFFFFF;
+  border: 0.1vw solid #D8C9B5;
+  border-radius: 0.6vw;
+}
+
+.admin-module-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 3vh;
+}
+
+.admin-module-header h2 {
+  margin: 0 0 1vh;
+  font-size: 1.7vw;
+  color: #211D1B;
+}
+
+.admin-module-header p {
+  margin: 0;
+  font-size: 1vw;
+  color: #75695D;
+}
+
+/* Botones para agregar */
+
+.admin-add-button {
+  padding: 1.5vh 1.8vw;
+  border: none;
+  border-radius: 0.4vw;
+  background-color: #211D1B;
+  color: #F2D5A0;
+  font-size: 1vw;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.admin-add-button:hover {
+  background-color: #493A2F;
+}
+
+/* Estado inicial de las listas */
+
+.admin-empty-state {
+  min-height: 25vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border: 0.12vw dashed #D8C9B5;
+  border-radius: 0.5vw;
+  background-color: #FAF8F4;
+}
+
+.admin-empty-state h3 {
+  margin: 0 0 1vh;
+  font-size: 1.3vw;
+  color: #211D1B;
+}
+
+.admin-empty-state p {
+  margin: 0;
+  font-size: 1vw;
+  color: #75695D;
+}
+
+/* Adaptación para pantallas pequeñas */
+
+@media (max-width: 700px) {
+  .admin-container {
+    padding: 3vh 4vw;
+  }
+
+  .admin-navigation {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2vw;
+    margin-bottom: 3vh;
+  }
+
+  .admin-navigation button {
+    width: 100%;
+    min-height: 6vh;
+    border-radius: 1vw;
+    font-size: 3vw;
+  }
+
+  .admin-welcome {
+    padding: 2.5vh 4vw;
+    border-radius: 1vw;
+  }
+
+  .admin-welcome h1 {
+    font-size: 4.5vw;
+  }
+
+  .admin-welcome p {
+    font-size: 2.8vw;
+  }
+
+  .admin-content {
+    padding: 2.5vh 3vw;
+    border-radius: 1vw;
+  }
+
+  .admin-module-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2vh;
+  }
+
+  .admin-module-header h2 {
+    font-size: 4vw;
+  }
+
+  .admin-module-header p {
+    font-size: 2.7vw;
+  }
+
+  .admin-add-button {
+    padding: 1.5vh 4vw;
+    border-radius: 1vw;
+    font-size: 2.8vw;
+  }
+
+  .admin-empty-state {
+    min-height: 22vh;
+    padding: 2vh 3vw;
+  }
+
+  .admin-empty-state h3 {
+    font-size: 3.5vw;
+  }
+
+  .admin-empty-state p {
+    font-size: 2.8vw;
+  }
+}
+
+/* Formulario de categorías */
+
+.admin-category-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5vh;
+  padding: 2.5vh 2vw;
+  margin-bottom: 3vh;
+  background-color: #FAF8F4;
+  border: 0.1vw solid #D8C9B5;
+  border-radius: 0.5vw;
+}
+
+.admin-category-form h3 {
+  margin: 0;
+  font-size: 1.3vw;
+}
+
+.admin-category-form label {
+  font-size: 1vw;
+  font-weight: bold;
+}
+
+.admin-category-form input {
+  width: 100%;
+  padding: 1.5vh 1vw;
+  box-sizing: border-box;
+  border: 0.1vw solid #C8BBA9;
+  border-radius: 0.3vw;
+  outline: none;
+  font-size: 1vw;
+  color: #211D1B;
+  background-color: #FFFFFF;
+}
+
+.admin-category-form input:focus {
+  border-color: #C69B61;
+}
+
+.admin-category-error {
+  margin: 0;
+  color: #B52D2D;
+  font-size: 0.95vw;
+}
+
+.admin-form-actions {
+  display: flex;
+  gap: 1vw;
+  margin-top: 1vh;
+}
+
+.admin-save-button,
+.admin-cancel-button {
+  padding: 1.3vh 1.5vw;
+  border: none;
+  border-radius: 0.3vw;
+  font-size: 0.95vw;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.admin-save-button {
+  background-color: #211D1B;
+  color: #F2D5A0;
+}
+
+.admin-save-button:hover {
+  background-color: #493A2F;
+}
+
+.admin-cancel-button {
+  background-color: #E4DDD2;
+  color: #211D1B;
+}
+
+.admin-cancel-button:hover {
+  background-color: #D2C7B8;
+}
+
+/* Listado de categorías */
+
+.admin-category-list {
+  width: 100%;
+}
+
+.admin-list-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2vh;
+}
+
+.admin-list-title h3 {
+  margin: 0;
+  font-size: 1.3vw;
+}
+
+.admin-list-title span {
+  font-size: 0.9vw;
+  color: #75695D;
+}
+
+.admin-category-table {
+  width: 100%;
+}
+
+.admin-category-row {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr 1fr;
+  align-items: center;
+  gap: 1vw;
+  min-height: 7vh;
+  padding: 1vh 1vw;
+  box-sizing: border-box;
+  border-bottom: 0.1vw solid #E8E1D8;
+}
+
+.admin-category-heading {
+  min-height: 5vh;
+  background-color: #F2EDE4;
+  border-radius: 0.3vw;
+  font-weight: bold;
+  font-size: 0.95vw;
+}
+
+.admin-category-name {
+  font-size: 1vw;
+  font-weight: 600;
+}
+
+.admin-category-id {
+  font-size: 0.9vw;
+  color: #75695D;
+}
+
+.admin-category-actions {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.7vw;
+}
+
+.admin-edit-button,
+.admin-delete-button {
+  padding: 0.9vh 1vw;
+  border: none;
+  border-radius: 0.3vw;
+  font-size: 0.85vw;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.admin-edit-button {
+  background-color: #E8D5B8;
+  color: #211D1B;
+}
+
+.admin-edit-button:hover {
+  background-color: #D8BC94;
+}
+
+.admin-delete-button {
+  background-color: #F1DEDA;
+  color: #A12E26;
+}
+
+.admin-delete-button:hover {
+  background-color: #E7C4BD;
+}
+
+/* Adaptación móvil del módulo */
+
+@media (max-width: 700px) {
+  .admin-category-form {
+    padding: 2.5vh 3vw;
+    border-radius: 1vw;
+  }
+
+  .admin-category-form h3 {
+    font-size: 3.5vw;
+  }
+
+  .admin-category-form label {
+    font-size: 2.8vw;
+  }
+
+  .admin-category-form input {
+    padding: 1.5vh 2vw;
+    border-radius: 1vw;
+    font-size: 2.8vw;
+  }
+
+  .admin-category-error {
+    font-size: 2.6vw;
+  }
+
+  .admin-form-actions {
+    flex-wrap: wrap;
+    gap: 2vw;
+  }
+
+  .admin-save-button,
+  .admin-cancel-button {
+    padding: 1.3vh 3vw;
+    border-radius: 1vw;
+    font-size: 2.7vw;
+  }
+
+  .admin-list-title h3 {
+    font-size: 3.5vw;
+  }
+
+  .admin-list-title span {
+    font-size: 2.5vw;
+  }
+
+  .admin-category-row {
+    grid-template-columns: 1fr;
+    gap: 1vh;
+    padding: 1.5vh 2vw;
+  }
+
+  .admin-category-heading {
+    display: none;
+  }
+
+  .admin-category-name {
+    font-size: 3vw;
+  }
+
+  .admin-category-id {
+    font-size: 2.5vw;
+  }
+
+  .admin-category-actions {
+    gap: 2vw;
+  }
+
+  .admin-edit-button,
+  .admin-delete-button {
+    padding: 1vh 3vw;
+    border-radius: 1vw;
+    font-size: 2.5vw;
+  }
+}
+
+/* Formulario de productos */
+
+.admin-product-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+    padding: 2.5vh 2vw;
+    margin-bottom: 3vh;
+    background-color: #FAF8F4;
+    border: 0.1vw solid #D8C9B5;
+    border-radius: 0.5vw;
+}
+
+.admin-product-form h3 {
+    margin: 0 0 1vh;
+    font-size: 1.3vw;
+}
+
+.admin-product-form label {
+    font-size: 1vw;
+    font-weight: bold;
+}
+
+.admin-product-form input,
+.admin-product-form select,
+.admin-product-form textarea {
+    width: 100%;
+    padding: 1.5vh 1vw;
+    box-sizing: border-box;
+    border: 0.1vw solid #C8BBA9;
+    border-radius: 0.3vw;
+    outline: none;
+    font-family: inherit;
+    font-size: 1vw;
+    color: #211D1B;
+    background-color: #FFFFFF;
+}
+
+.admin-product-form input:focus,
+.admin-product-form select:focus,
+.admin-product-form textarea:focus {
+    border-color: #C69B61;
+}
+
+.admin-product-form textarea {
+    resize: vertical;
+    min-height: 12vh;
+}
+
+.admin-product-form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2vw;
+}
+
+.admin-product-form-row > div {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+}
+
+.admin-product-image-help {
+    margin: -0.5vh 0 0;
+    color: #75695D;
+    font-size: 0.85vw;
+}
+
+/* Listado de productos */
+
+.admin-product-list {
+    width: 100%;
+}
+
+.admin-product-table {
+    width: 100%;
+}
+
+.admin-product-row {
+    display: grid;
+    grid-template-columns: 2fr 1.2fr 1fr 0.6fr 1.5fr;
+    align-items: center;
+    gap: 1vw;
+    min-height: 9vh;
+    padding: 1vh 1vw;
+    box-sizing: border-box;
+    border-bottom: 0.1vw solid #E8E1D8;
+    font-size: 0.9vw;
+}
+
+.admin-product-heading {
+    min-height: 5vh;
+    background-color: #F2EDE4;
+    border-radius: 0.3vw;
+    font-weight: bold;
+}
+
+.admin-product-name {
+    display: flex;
+    align-items: center;
+    gap: 0.8vw;
+    font-weight: 600;
+}
+
+.admin-product-name img {
+    width: 4.5vw;
+    height: 6vh;
+    object-fit: cover;
+    border-radius: 0.3vw;
+    background-color: #F2EDE4;
+}
+
+.admin-product-no-stock {
+    color: #B52D2D;
+    font-weight: bold;
+}
+
+@media (max-width: 700px) {
+    .admin-product-form {
+        padding: 2.5vh 3vw;
+        border-radius: 1vw;
+    }
+
+    .admin-product-form h3 {
+        font-size: 3.5vw;
+    }
+
+    .admin-product-form label {
+        font-size: 2.8vw;
+    }
+
+    .admin-product-form input,
+    .admin-product-form select,
+    .admin-product-form textarea {
+        padding: 1.5vh 2vw;
+        border-radius: 1vw;
+        font-size: 2.8vw;
+    }
+
+    .admin-product-form-row {
+        grid-template-columns: 1fr;
+        gap: 1.5vh;
+    }
+
+    .admin-product-image-help {
+        font-size: 2.4vw;
+    }
+
+    .admin-product-heading {
+        display: none;
+    }
+
+    .admin-product-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5vh 2vw;
+        padding: 2vh 2vw;
+        font-size: 2.6vw;
+    }
+
+    .admin-product-name {
+        grid-column: 1 / -1;
+        font-size: 3vw;
+    }
+
+    .admin-product-name img {
+        width: 14vw;
+        height: 10vh;
+    }
+
+    .admin-product-row .admin-category-actions {
+        grid-column: 1 / -1;
+    }
+}

@@ -109,3 +109,45 @@ export const productos = [
         descripcion: "Una campera de corte amplio que sigue una silueta relajada y actual. Ideal para sumar volumen y personalidad a tu outfit."
     }
 ];
+
+// Obtiene los productos guardados o devuelve el catálogo inicial.
+export const obtenerProductos = () => {
+    try {
+        const productosGuardados = localStorage.getItem("productos");
+
+        if (productosGuardados !== null) {
+            const productosParseados = JSON.parse(productosGuardados);
+
+            if (Array.isArray(productosParseados)) {
+                return productosParseados;
+            }
+        }
+
+        return productos;
+    } catch (error) {
+        console.error("Error al obtener los productos:", error);
+        return productos;
+    }
+};
+
+// Guarda el catálogo actualizado.
+export const guardarProductos = (nuevosProductos) => {
+    try {
+        localStorage.setItem("productos", JSON.stringify(nuevosProductos));
+        return true;
+    } catch (error) {
+        console.error("Error al guardar los productos:", error);
+        return false;
+    }
+};
+
+// Genera un nuevo ID numérico sin repetir los existentes.
+export const generarIdProducto = (listaProductos) => {
+    if (listaProductos.length === 0) {
+        return 1;
+    }
+
+    const ids = listaProductos.map(producto => Number(producto.id));
+
+    return Math.max(...ids) + 1;
+};

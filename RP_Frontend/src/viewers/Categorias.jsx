@@ -1,32 +1,8 @@
 
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { productos } from "../data/Productos";
-
-// Categorías disponibles
-const categorias = [
-    {
-        id: "superiores",
-        nombre: "Prendas superiores",
-        descripcion: "Remeras, buzos y camisas para todos los estilos."
-    },
-    {
-        id: "pantalones",
-        nombre: "Pantalones",
-        descripcion: "Jeans, joggers y pantalones urbanos."
-    },
-    {
-        id: "gorras",
-        nombre: "Gorras",
-        descripcion: "Complementá tu estilo con nuestros accesorios."
-    },
-    {
-        id: "camperas",
-        nombre: "Camperas",
-        descripcion: "Diseños únicos para completar tu outfit."
-    }
-];
-
+import { obtenerProductos } from "../data/Productos";
+import { obtenerCategorias } from "../data/Categorias";
 
 class Categorias extends Component {
 
@@ -34,9 +10,18 @@ class Categorias extends Component {
         super(props);
 
         this.state = {
-            categoriaActiva: "todas"
+            categoriaActiva: "todas",
+            categorias: [],
+            productos: []
         };
     }
+
+        componentDidMount() {
+            this.setState({
+                categorias: obtenerCategorias(),
+                productos: obtenerProductos()
+            });
+        }
 
     seleccionarCategoria = (categoria) => {
         this.setState({
@@ -76,10 +61,9 @@ class Categorias extends Component {
 
     renderSeccionCategoria = (categoria) => {
 
-        const productosCategoria = productos.filter(
+        const productosCategoria = this.state.productos.filter(
             producto => producto.categoria === categoria.id
         );
-
         return (
             <section
                 className="categoria-section"
@@ -88,7 +72,11 @@ class Categorias extends Component {
                 <div className="categoria-section-header">
                     <div>
                         <h2>{categoria.nombre}</h2>
-                        <p>{categoria.descripcion}</p>
+
+                        <p>
+                            {categoria.descripcion ||
+                                "Descubrí los productos de esta categoría."}
+                        </p>
                     </div>
 
                     <span>
@@ -107,7 +95,11 @@ class Categorias extends Component {
 
     render() {
 
-        const { categoriaActiva } = this.state;
+                const {
+                    categoriaActiva,
+                    categorias,
+                    productos
+                    } = this.state;
 
         const categoriasVisibles =
             categoriaActiva === "todas"
@@ -117,7 +109,7 @@ class Categorias extends Component {
                 );
 
         return (
-            <main className="categorias-container">
+            <div className="categorias-container">
 
                 {/* Encabezado */}
                 <section className="categorias-hero">
@@ -166,13 +158,22 @@ class Categorias extends Component {
                 {/* Productos agrupados */}
                 <div className="categorias-content">
 
-                    {categoriasVisibles.map(categoria =>
-                        this.renderSeccionCategoria(categoria)
+                    {categorias.length > 0 ? (
+                        categoriasVisibles.map(categoria =>
+                            this.renderSeccionCategoria(categoria)
+                        )
+                    ) : (
+                        <div className="categorias-empty">
+                            <h2>No hay categorías disponibles</h2>
+                            <p>
+                                Próximamente agregaremos nuevas categorías.
+                            </p>
+                        </div>
                     )}
 
                 </div>
 
-            </main>
+            </div>
         );
     }
 }

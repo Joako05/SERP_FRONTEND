@@ -2760,3 +2760,192 @@ body {
         font-size: 2.5vw;
     }
 }
+
+
+/* =================================
+   EDICIÓN DEL PERFIL
+================================= */
+
+.perfil-data-item label {
+    color: #81776C;
+    font-size: 0.95vw;
+    font-weight: 500;
+}
+
+.perfil-data-item input,
+.perfil-data-item textarea {
+    width: 100%;
+    padding: 1.3vh 1vw;
+    box-sizing: border-box;
+    border: 0.08vw solid #D8D0C5;
+    border-radius: 0.4vw;
+    outline: none;
+    background-color: #FFFEFC;
+    color: #211D1B;
+    font-family: inherit;
+    font-size: 1vw;
+    transition: border-color 0.2s;
+}
+
+.perfil-data-item input:focus,
+.perfil-data-item textarea:focus {
+    border-color: #211D1B;
+}
+
+.perfil-data-item textarea {
+    resize: vertical;
+    min-height: 8vh;
+}
+
+/* BOTONES */
+
+.perfil-footer {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1vw;
+    margin-top: 3vh;
+}
+
+.perfil-edit-button,
+.perfil-save-button,
+.perfil-cancel-button,
+.perfil-password-button {
+    padding: 1.5vh 2vw;
+    border: none;
+    border-radius: 0.5vw;
+    font-family: inherit;
+    font-size: 1vw;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.perfil-edit-button,
+.perfil-save-button {
+    background-color: #211D1B;
+    color: #F2D5A0;
+}
+
+.perfil-edit-button:hover,
+.perfil-save-button:hover {
+    background-color: #443A33;
+}
+
+.perfil-cancel-button {
+    background-color: #E5D9C9;
+    color: #211D1B;
+}
+
+.perfil-cancel-button:hover {
+    background-color: #D8C9B6;
+}
+
+/* MENSAJES */
+
+.perfil-message {
+    margin-top: 2vh;
+    padding: 1.5vh 1.5vw;
+    border-radius: 0.5vw;
+    font-size: 1vw;
+}
+
+.perfil-message.exito {
+    color: #245C37;
+    background-color: #E4F2E7;
+}
+
+.perfil-message.error {
+    color: #9A2929;
+    background-color: #F8E5E5;
+}
+
+/* SEGURIDAD */
+
+.perfil-security {
+    margin-top: 4vh;
+}
+
+.perfil-security-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2vw;
+}
+
+.perfil-security-content strong {
+    color: #211D1B;
+    font-size: 1.1vw;
+}
+
+.perfil-security-content p {
+    margin: 0.8vh 0 0;
+    color: #77716B;
+    font-size: 0.95vw;
+}
+
+.perfil-password-button {
+    background-color: #D8D0C5;
+    color: #77716B;
+    cursor: not-allowed;
+    opacity: 0.8;
+    white-space: nowrap;
+}
+
+.perfil-security-note {
+    margin-top: 2vh;
+    color: #81776C;
+    font-size: 0.85vw;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 700px) {
+
+    .perfil-data-item label {
+        font-size: 2.5vw;
+    }
+
+    .perfil-data-item input,
+    .perfil-data-item textarea {
+        padding: 1.5vh 3vw;
+        font-size: 2.8vw;
+        border-radius: 1vw;
+    }
+
+    .perfil-footer {
+        gap: 2vw;
+    }
+
+    .perfil-edit-button,
+    .perfil-save-button,
+    .perfil-cancel-button,
+    .perfil-password-button {
+        padding: 1.5vh 3vw;
+        font-size: 2.5vw;
+        border-radius: 1vw;
+    }
+
+    .perfil-message {
+        padding: 1.5vh 3vw;
+        font-size: 2.5vw;
+    }
+
+    .perfil-security-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2vh;
+    }
+
+    .perfil-security-content strong {
+        font-size: 3vw;
+    }
+
+    .perfil-security-content p {
+        font-size: 2.5vw;
+    }
+
+    .perfil-security-note {
+        font-size: 2.2vw;
+    }
+}

@@ -1,7 +1,7 @@
 
 import React, { Component } from "react";
 import { Link, Navigate } from "react-router-dom";
-import { productos } from "../data/Productos";
+import { obtenerProductos } from "../data/Productos";
 
 class Producto extends Component {
 
@@ -13,23 +13,40 @@ class Producto extends Component {
             mensaje: "",
             tipoMensaje: "",
             preparandoPedido: false,
-            redirigirPedido: false
+            redirigirPedido: false,
+            rutaActual: ""
         };
 
         this.timerPreparacion = null;
     }
 
-    componentDidMount() {
-        const id = Number(window.location.pathname.split("/").pop());
+componentDidMount() {
+    this.cargarProducto();
+}
 
-        const productoEncontrado = productos.find(
-            producto => producto.id === id
-        );
+componentDidUpdate() {
+    const rutaActual = window.location.pathname;
 
-        this.setState({
-            producto: productoEncontrado || false
-        });
+    if (rutaActual !== this.state.rutaActual) {
+        this.cargarProducto();
     }
+}
+
+cargarProducto = () => {
+    const rutaActual = window.location.pathname;
+    const id = Number(rutaActual.split("/").pop());
+
+    const productosActuales = obtenerProductos();
+
+    const productoEncontrado = productosActuales.find(
+        producto => producto.id === id
+    );
+
+    this.setState({
+        producto: productoEncontrado || false,
+        rutaActual
+    });
+};
 
     componentWillUnmount() {
         if (this.timerPreparacion) {
@@ -153,7 +170,7 @@ class Producto extends Component {
             mensaje,
             tipoMensaje,
             preparandoPedido,
-            redirigirPedido
+            redirigirPedido,
         } = this.state;
 
         if (redirigirPedido) {
