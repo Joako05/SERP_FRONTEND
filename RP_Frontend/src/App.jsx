@@ -8,8 +8,8 @@ import Header from "./components/header";
 import Footer from "./components/footer";
 
 // Importación de vistas
+import Signup from "./viewers/Signup";
 import Login from "./viewers/Login";
-import Signin from "./viewers/Signin";
 import Menu from "./viewers/menu";
 import Categorias from "./viewers/categorias";
 import Producto from "./viewers/producto";
@@ -38,9 +38,9 @@ class App extends Component {
 
                             <Route path="/" element={<Menu />} />
 
-                            <Route path="/login" element={<Login />} />
+                            <Route path="/signup" element={<Signup />} />
 
-                            <Route path="/signin" element={<Signin />} />
+                            <Route path="/login" element={<Login />} />
 
                             <Route path="/categorias" element={<Categorias />} />
 

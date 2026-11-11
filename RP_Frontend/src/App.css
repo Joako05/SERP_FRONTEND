@@ -580,3 +580,611 @@ body {
         font-size: 2.5vw;
     }
 }
+
+/* ================================
+   SIGN UP - REGISTRO
+================================ */
+
+.signup-container {
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4vh 2vw;
+    background-color: #f5f0e8;
+}
+
+.signup-card {
+    width: 46vw;
+    max-width: 46rem;
+    min-width: 20rem;
+    padding: 3vh 3vw;
+    background-color: #ffffff;
+    border-radius: 1.2vw;
+    box-shadow: 0 0.5vh 2vh rgba(0, 0, 0, 0.12);
+}
+
+.signup-header {
+    text-align: center;
+    margin-bottom: 3vh;
+}
+
+.signup-header h1 {
+    color: #3b2921;
+    font-size: 2vw;
+    margin-bottom: 1vh;
+}
+
+.signup-header p {
+    color: #777;
+    font-size: 1vw;
+}
+
+.signup-fields-row {
+    display: flex;
+    gap: 1.5vw;
+}
+
+.signup-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 2vh;
+}
+
+.signup-field label {
+    color: #3b2921;
+    font-size: 0.95vw;
+    font-weight: 600;
+    margin-bottom: 0.8vh;
+}
+
+.signup-field input {
+    width: 100%;
+    padding: 1.5vh 1vw;
+    border: 0.1vw solid #d8cec4;
+    border-radius: 0.5vw;
+    outline: none;
+    font-size: 0.95vw;
+    background-color: #fffdfb;
+    transition: border-color 0.2s ease;
+}
+
+.signup-field input:focus {
+    border-color: #8b5e45;
+}
+
+.signup-field input::placeholder {
+    color: #aaa;
+}
+
+.signup-button {
+    width: 100%;
+    padding: 1.8vh;
+    margin-top: 1vh;
+    border: none;
+    border-radius: 0.5vw;
+    background-color: #4b3025;
+    color: #ffffff;
+    font-size: 1vw;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.signup-button:hover {
+    background-color: #704b38;
+}
+
+.signup-message {
+    padding: 1.3vh 1vw;
+    margin-bottom: 1.5vh;
+    border-radius: 0.5vw;
+    font-size: 0.9vw;
+    text-align: center;
+}
+
+.signup-error {
+    color: #9b2525;
+    background-color: #fce8e8;
+}
+
+.signup-success {
+    color: #246b3a;
+    background-color: #e6f5e9;
+}
+
+.signup-login-link {
+    margin-top: 2.5vh;
+    text-align: center;
+    font-size: 0.95vw;
+    color: #666;
+}
+
+.signup-login-link a {
+    color: #704b38;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.signup-login-link a:hover {
+    text-decoration: underline;
+}
+
+/* Adaptación para pantallas pequeñas */
+
+@media (max-width: 700px) {
+    .signup-card {
+        width: 90vw;
+        min-width: unset;
+        padding: 3vh 5vw;
+        border-radius: 2vw;
+    }
+
+    .signup-header h1 {
+        font-size: 6vw;
+    }
+
+    .signup-header p {
+        font-size: 3.2vw;
+    }
+
+    .signup-fields-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .signup-field label {
+        font-size: 3.2vw;
+    }
+
+    .signup-field input {
+        padding: 1.5vh 3vw;
+        font-size: 3.2vw;
+        border-radius: 1vw;
+    }
+
+    .signup-button {
+        font-size: 3.5vw;
+        border-radius: 1vw;
+    }
+
+    .signup-message,
+    .signup-login-link {
+        font-size: 3vw;
+    }
+}
+
+/* ================================
+   LOGIN - INICIO DE SESIÓN
+================================ */
+
+.login-container {
+    width: 100%;
+    min-height: 80vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 4vh 2vw;
+    background-color: #f5f0e8;
+}
+
+.login-card {
+    width: 46vw;
+    max-width: 46rem;
+    min-width: 20rem;
+    padding: 3vh 3vw;
+    background-color: #ffffff;
+    border-radius: 1.2vw;
+    box-shadow: 0 0.5vh 2vh rgba(0, 0, 0, 0.12);
+}
+
+.login-header {
+    text-align: center;
+    margin-bottom: 3vh;
+}
+
+.login-header h1 {
+    color: #3b2921;
+    font-size: 2vw;
+    margin-bottom: 1vh;
+}
+
+.login-header p {
+    color: #777;
+    font-size: 1vw;
+}
+
+.login-field {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 2vh;
+}
+
+.login-field label {
+    color: #3b2921;
+    font-size: 0.95vw;
+    font-weight: 600;
+    margin-bottom: 0.8vh;
+}
+
+.login-field input {
+    width: 100%;
+    padding: 1.5vh 1vw;
+    border: 0.1vw solid #d8cec4;
+    border-radius: 0.5vw;
+    outline: none;
+    font-size: 0.95vw;
+    background-color: #fffdfb;
+    transition: border-color 0.2s ease;
+}
+
+.login-field input:focus {
+    border-color: #8b5e45;
+}
+
+.login-field input::placeholder {
+    color: #aaa;
+}
+
+.login-button {
+    width: 100%;
+    padding: 1.8vh;
+    margin-top: 1vh;
+    border: none;
+    border-radius: 0.5vw;
+    background-color: #4b3025;
+    color: #ffffff;
+    font-size: 1vw;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #704b38;
+}
+
+.login-message {
+    padding: 1.3vh 1vw;
+    margin-bottom: 1.5vh;
+    border-radius: 0.5vw;
+    font-size: 0.9vw;
+    text-align: center;
+}
+
+.login-error {
+    color: #9b2525;
+    background-color: #fce8e8;
+}
+
+.login-success {
+    color: #246b3a;
+    background-color: #e6f5e9;
+}
+
+.login-signup-link {
+    margin-top: 2.5vh;
+    text-align: center;
+    font-size: 0.95vw;
+    color: #666;
+}
+
+.login-signup-link a {
+    color: #704b38;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.login-signup-link a:hover {
+    text-decoration: underline;
+}
+
+/* Adaptación para pantallas pequeñas */
+
+@media (max-width: 700px) {
+    .login-card {
+        width: 90vw;
+        min-width: unset;
+        padding: 3vh 5vw;
+        border-radius: 2vw;
+    }
+
+    .login-header h1 {
+        font-size: 6vw;
+    }
+
+    .login-header p {
+        font-size: 3.2vw;
+    }
+
+    .login-field label {
+        font-size: 3.2vw;
+    }
+
+    .login-field input {
+        padding: 1.5vh 3vw;
+        font-size: 3.2vw;
+        border-radius: 1vw;
+    }
+
+    .login-button {
+        font-size: 3.5vw;
+        border-radius: 1vw;
+    }
+
+    .login-message,
+    .login-signup-link {
+        font-size: 3vw;
+    }
+}
+
+/* =================================
+   CATEGORIAS - RETRO PASSION
+================================= */
+
+.categorias-container {
+    width: 100%;
+    min-height: 80vh;
+    padding: 5vh 6vw;
+    background-color: #f5f0e8;
+}
+
+/* Encabezado */
+
+.categorias-hero {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 4vh;
+}
+
+.categorias-hero h1 {
+    color: #3b2921;
+    font-size: 2.5vw;
+    margin-bottom: 1.5vh;
+}
+
+.categorias-hero p {
+    color: #777;
+    font-size: 1.1vw;
+}
+
+/* Filtros */
+
+.categorias-filters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1vw;
+    margin-bottom: 5vh;
+}
+
+.categoria-filter {
+    padding: 1.3vh 1.5vw;
+    border: 0.1vw solid #8b5e45;
+    border-radius: 2vw;
+    background-color: transparent;
+    color: #4b3025;
+    font-size: 0.95vw;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.categoria-filter:hover {
+    background-color: #e5d7c9;
+}
+
+.categoria-filter.active {
+    background-color: #4b3025;
+    color: #ffffff;
+}
+
+/* Secciones de categorías */
+
+.categoria-section {
+    width: 100%;
+    margin-bottom: 6vh;
+}
+
+.categoria-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5vh;
+    padding-bottom: 1.5vh;
+    border-bottom: 0.1vw solid #d8cec4;
+}
+
+.categoria-section-header h2 {
+    color: #3b2921;
+    font-size: 1.8vw;
+    margin-bottom: 0.8vh;
+}
+
+.categoria-section-header p {
+    color: #777;
+    font-size: 0.95vw;
+}
+
+.categoria-section-header span {
+    color: #8b5e45;
+    font-size: 0.9vw;
+}
+
+/* Grilla de productos */
+
+.categoria-products-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2vw;
+}
+
+/* Tarjetas */
+
+.categoria-product-card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background-color: #ffffff;
+    border-radius: 1vw;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: 0 0.4vh 1.5vh rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.categoria-product-card:hover {
+    transform: translateY(-0.5vh);
+    box-shadow: 0 0.8vh 2vh rgba(0, 0, 0, 0.14);
+}
+
+/* Imágenes */
+
+.categoria-product-image {
+    width: 100%;
+    height: 32vh;
+    overflow: hidden;
+    background-color: #e9e1d8;
+}
+
+.categoria-product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.categoria-product-card:hover .categoria-product-image img {
+    transform: scale(1.05);
+}
+
+/* Información */
+
+.categoria-product-info {
+    padding: 2vh 1.3vw;
+}
+
+.categoria-product-info h3 {
+    color: #3b2921;
+    font-size: 1.1vw;
+    margin-bottom: 1.2vh;
+}
+
+.categoria-product-price {
+    color: #704b38;
+    font-size: 1.1vw;
+    font-weight: bold;
+    margin-bottom: 1.5vh;
+}
+
+.categoria-product-link {
+    color: #8b5e45;
+    font-size: 0.9vw;
+    font-weight: bold;
+}
+
+/* Adaptación para tablets y celulares */
+
+@media (max-width: 900px) {
+
+    .categoria-products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .categorias-hero h1 {
+        font-size: 4vw;
+    }
+
+    .categorias-hero p {
+        font-size: 1.8vw;
+    }
+
+    .categoria-filter {
+        font-size: 1.6vw;
+    }
+
+    .categoria-section-header h2 {
+        font-size: 2.8vw;
+    }
+
+    .categoria-section-header p,
+    .categoria-section-header span {
+        font-size: 1.5vw;
+    }
+
+    .categoria-product-info h3,
+    .categoria-product-price {
+        font-size: 1.8vw;
+    }
+
+    .categoria-product-link {
+        font-size: 1.5vw;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .categorias-container {
+        padding: 4vh 5vw;
+    }
+
+    .categorias-hero h1 {
+        font-size: 6vw;
+    }
+
+    .categorias-hero p {
+        font-size: 3.2vw;
+    }
+
+    .categorias-filters {
+        gap: 2vw;
+    }
+
+    .categoria-filter {
+        padding: 1.2vh 3vw;
+        font-size: 2.8vw;
+        border-radius: 5vw;
+    }
+
+    .categoria-section-header {
+        align-items: flex-start;
+        gap: 2vw;
+    }
+
+    .categoria-section-header h2 {
+        font-size: 4.5vw;
+    }
+
+    .categoria-section-header p,
+    .categoria-section-header span {
+        font-size: 2.7vw;
+    }
+
+    .categoria-products-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 3vw;
+    }
+
+    .categoria-product-image {
+        height: 23vh;
+    }
+
+    .categoria-product-info {
+        padding: 1.5vh 2vw;
+    }
+
+    .categoria-product-info h3 {
+        font-size: 3vw;
+    }
+
+    .categoria-product-price {
+        font-size: 3.2vw;
+    }
+
+    .categoria-product-link {
+        font-size: 2.7vw;
+    }
+}

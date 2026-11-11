@@ -1,6 +1,6 @@
 
 import React, { Component } from "react";
-import { Link, Navigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 class Header extends Component {
 
@@ -8,8 +8,7 @@ class Header extends Component {
         super(props);
 
         this.state = {
-            menuAbierto: false,
-            redirigirLogin: false
+            menuAbierto: false
         };
     }
 
@@ -28,22 +27,15 @@ class Header extends Component {
     };
 
     // Cerrar sesión
-    cerrarSesion = () => {
+ cerrarSesion = () => {
+    localStorage.removeItem("token");
 
-        // Eliminar el token almacenado, si existe
-        localStorage.removeItem("token");
-
-        this.setState({
-            menuAbierto: false,
-            redirigirLogin: true
-        });
-    };
+    this.setState({
+        menuAbierto: false
+    });
+};
 
     render() {
-
-        if (this.state.redirigirLogin) {
-            return <Navigate to="/login" replace />;
-        }
 
         return (
             <header className="header-container">
@@ -135,11 +127,12 @@ class Header extends Component {
                                     Mi perfil
                                 </Link>
 
-                                <button
+                              <Link
+                                    to="/login"
                                     onClick={this.cerrarSesion}
-                                >
+                                    >
                                     Cerrar sesión
-                                </button>
+                            </Link>
 
                             </div>
 
