@@ -1,6 +1,6 @@
 
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 import { productos } from "../data/Productos";
 
 class Producto extends Component {
@@ -11,8 +11,12 @@ class Producto extends Component {
         this.state = {
             producto: null,
             mensaje: "",
-            tipoMensaje: ""
+            tipoMensaje: "",
+            preparandoPedido: false,
+            redirigirPedido: false
         };
+
+        this.timerPreparacion = null;
     }
 
     componentDidMount() {
@@ -25,6 +29,12 @@ class Producto extends Component {
         this.setState({
             producto: productoEncontrado || false
         });
+    }
+
+    componentWillUnmount() {
+        if (this.timerPreparacion) {
+            clearTimeout(this.timerPreparacion);
+        }
     }
 
     agregarAlCarrito = () => {
@@ -79,15 +89,92 @@ class Producto extends Component {
     };
 
     comprarAhora = () => {
-        this.setState({
-            mensaje: "El proceso de compra estará disponible cuando terminemos la vista de checkout.",
-            tipoMensaje: "info"
-        });
+        const { producto } = this.state;
+
+        if (!producto) return;
+
+        try {
+            const carritoGuardado = localStorage.getItem("carrito");
+            const carrito = carritoGuardado
+                ? JSON.parse(carritoGuardado)
+                : [];
+
+            const productoEnCarrito = carrito.find(
+                item => item.id === producto.id
+            );
+
+            const cantidadActual = productoEnCarrito
+                ? productoEnCarrito.cantidad
+                : 0;
+
+            if (cantidadActual >= producto.stock) {
+                this.setState({
+                    mensaje: "No hay más unidades disponibles de este producto.",
+                    tipoMensaje: "error"
+                });
+                return;
+            }
+
+            if (productoEnCarrito) {
+                productoEnCarrito.cantidad += 1;
+            } else {
+                carrito.push({
+                    ...producto,
+                    cantidad: 1
+                });
+            }
+
+            localStorage.setItem("carrito", JSON.stringify(carrito));
+
+            this.setState({
+                preparandoPedido: true,
+                mensaje: "",
+                tipoMensaje: ""
+            });
+
+            this.timerPreparacion = setTimeout(() => {
+                this.setState({
+                    preparandoPedido: false,
+                    redirigirPedido: true
+                });
+            }, 2000);
+
+        } catch (error) {
+            this.setState({
+                mensaje: "No se pudo preparar tu pedido. Intentá nuevamente.",
+                tipoMensaje: "error"
+            });
+        }
     };
 
     render() {
+        const {
+            producto,
+            mensaje,
+            tipoMensaje,
+            preparandoPedido,
+            redirigirPedido
+        } = this.state;
 
-        const { producto, mensaje, tipoMensaje } = this.state;
+        if (redirigirPedido) {
+            return <Navigate to="/pedidos" replace />;
+        }
+
+        if (preparandoPedido) {
+            return (
+                <main className="producto-loading-order">
+                    <div className="producto-loading-content">
+                        <div className="producto-spinner"></div>
+
+                        <h1>Preparando tu pedido</h1>
+
+                        <p>
+                            Estamos organizando tu compra. Un momento, por favor...
+                        </p>
+                    </div>
+                </main>
+            );
+        }
 
         if (producto === null) {
             return (
@@ -105,6 +192,7 @@ class Producto extends Component {
                     <div className="producto-no-encontrado">
                         <h1>Producto no encontrado</h1>
                         <p>El producto que buscás no está disponible.</p>
+
                         <Link to="/categorias">
                             Volver a categorías
                         </Link>
@@ -118,7 +206,6 @@ class Producto extends Component {
 
                 <div className="producto-content">
 
-                    {/* Imagen, precio y stock */}
                     <section className="producto-left">
 
                         <div className="producto-image-container">
@@ -132,6 +219,7 @@ class Producto extends Component {
 
                             <div className="producto-price">
                                 <span>Precio</span>
+
                                 <strong>
                                     ${producto.precio.toLocaleString("es-AR")}
                                 </strong>
@@ -139,6 +227,7 @@ class Producto extends Component {
 
                             <div className="producto-stock">
                                 <span>Disponibilidad</span>
+
                                 <strong>
                                     {producto.stock > 0
                                         ? `${producto.stock} unidades disponibles`
@@ -150,7 +239,6 @@ class Producto extends Component {
 
                     </section>
 
-                    {/* Información y acciones */}
                     <section className="producto-right">
 
                         <span className="producto-category">

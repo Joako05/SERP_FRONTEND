@@ -7,12 +7,14 @@ class Pedidos extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {
-            productos: this.obtenerCarrito(),
-            direccion: localStorage.getItem("direccionEntrega") || "",
-            mensajeError: "",
-            pagoRealizado: false
-        };
+      
+this.state = {
+    productos: this.obtenerCarrito(),
+    direccion: localStorage.getItem("direccionEntrega") || "",
+    metodoPago: "debito",
+    mensajeError: "",
+    pagoRealizado: false
+};
     }
 
     obtenerCarrito = () => {
@@ -30,6 +32,12 @@ class Pedidos extends Component {
             mensajeError: ""
         });
     };
+    handleMetodoPago = (event) => {
+    this.setState({
+        metodoPago: event.target.value,
+        mensajeError: ""
+    });
+};
 
     calcularTotal = () => {
         return this.state.productos.reduce(
@@ -58,6 +66,7 @@ class Pedidos extends Component {
         }
 
         localStorage.setItem("direccionEntrega", direccion.trim());
+        localStorage.setItem("metodoPago", this.state.metodoPago);
 
         // Simulación de pago: no se realiza ningún cobro real.
         localStorage.removeItem("carrito");
@@ -172,46 +181,82 @@ class Pedidos extends Component {
 
                         </div>
 
+                        
                         <div className="pedido-section">
 
                             <h2>Método de pago</h2>
 
-                            <div className="pedido-payment-method">
+                            <div className="pedido-payment-options">
 
-                                <div className="pedido-payment-radio">
-                                    <span></span>
-                                </div>
+                                <label className="pedido-payment-method">
 
-                                <div>
-                                    <strong>
-                                        Tarjeta de crédito o débito
-                                    </strong>
-
-                                    <p>
-                                        Pago con tarjeta
-                                    </p>
-                                </div>
-
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    aria-hidden="true"
-                                >
-                                    <rect
-                                        x="2"
-                                        y="5"
-                                        width="20"
-                                        height="14"
-                                        rx="2"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="1.7"
+                                    <input
+                                        type="radio"
+                                        name="metodoPago"
+                                        value="debito"
+                                        checked={this.state.metodoPago === "debito"}
+                                        onChange={this.handleMetodoPago}
                                     />
-                                    <path
-                                        d="M2 10h20"
-                                        stroke="currentColor"
-                                        strokeWidth="1.7"
+
+                                    <div className="pedido-payment-info">
+                                        <strong>Tarjeta de débito</strong>
+                                        <p>Pago con tarjeta de débito</p>
+                                    </div>
+
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect
+                                            x="2"
+                                            y="5"
+                                            width="20"
+                                            height="14"
+                                            rx="2"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="1.7"
+                                        />
+                                        <path
+                                            d="M2 10h20"
+                                            stroke="currentColor"
+                                            strokeWidth="1.7"
+                                        />
+                                    </svg>
+
+                                </label>
+
+                                <label className="pedido-payment-method">
+
+                                    <input
+                                        type="radio"
+                                        name="metodoPago"
+                                        value="credito"
+                                        checked={this.state.metodoPago === "credito"}
+                                        onChange={this.handleMetodoPago}
                                     />
-                                </svg>
+
+                                    <div className="pedido-payment-info">
+                                        <strong>Tarjeta de crédito</strong>
+                                        <p>Pago con tarjeta de crédito</p>
+                                    </div>
+
+                                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                                        <rect
+                                            x="2"
+                                            y="5"
+                                            width="20"
+                                            height="14"
+                                            rx="2"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            strokeWidth="1.7"
+                                        />
+                                        <path
+                                            d="M2 10h20"
+                                            stroke="currentColor"
+                                            strokeWidth="1.7"
+                                        />
+                                    </svg>
+
+                                </label>
 
                             </div>
 

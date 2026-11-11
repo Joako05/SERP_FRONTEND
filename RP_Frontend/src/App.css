@@ -2433,3 +2433,159 @@ body {
         font-size: 2.5vw;
     }
 }
+
+/* =================================
+   PREPARANDO PEDIDO DESDE PRODUCTO
+================================= */
+
+.producto-loading-order {
+    width: 100%;
+    min-height: 65vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 4vh 3vw;
+    box-sizing: border-box;
+}
+
+.producto-loading-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2vh;
+}
+
+.producto-loading-content h1 {
+    margin: 0;
+    font-size: 2vw;
+    color: #211D1B;
+}
+
+.producto-loading-content p {
+    margin: 0;
+    font-size: 1.1vw;
+    color: #777;
+}
+
+.producto-spinner {
+    width: 4vw;
+    height: 4vw;
+    border: 0.35vw solid #e5ded3;
+    border-top-color: #211D1B;
+    border-radius: 50%;
+    animation: producto-spin 0.8s linear infinite;
+}
+
+@keyframes producto-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/* =================================
+   MÉTODOS DE PAGO
+================================= */
+
+.pedido-payment-options {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5vh;
+}
+
+.pedido-payment-method {
+    display: flex;
+    align-items: center;
+    gap: 1vw;
+    width: 100%;
+    padding: 2vh 1.5vw;
+    box-sizing: border-box;
+    border: 0.1vw solid #d8d0c5;
+    border-radius: 0.7vw;
+    background-color: #fff;
+    cursor: pointer;
+    transition: border-color 0.2s, background-color 0.2s;
+}
+
+.pedido-payment-method:has(input:checked) {
+    border-color: #211D1B;
+    background-color: #f8f3eb;
+}
+
+.pedido-payment-method input {
+    width: 1.1vw;
+    height: 1.1vw;
+    accent-color: #211D1B;
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.pedido-payment-info {
+    flex: 1;
+}
+
+.pedido-payment-info strong {
+    display: block;
+    color: #211D1B;
+    font-size: 1vw;
+}
+
+.pedido-payment-info p {
+    margin: 0.5vh 0 0;
+    color: #777;
+    font-size: 0.85vw;
+}
+
+.pedido-payment-method svg {
+    width: 2vw;
+    height: 2vw;
+    color: #211D1B;
+    flex-shrink: 0;
+}
+
+
+/* =================================
+   RESPONSIVE
+================================= */
+
+@media (max-width: 700px) {
+
+    .producto-loading-content h1 {
+        font-size: 4vw;
+    }
+
+    .producto-loading-content p {
+        font-size: 2.5vw;
+    }
+
+    .producto-spinner {
+        width: 9vw;
+        height: 9vw;
+        border-width: 0.8vw;
+    }
+
+    .pedido-payment-method {
+        gap: 2vw;
+        padding: 2vh 3vw;
+        border-radius: 1.5vw;
+    }
+
+    .pedido-payment-method input {
+        width: 3vw;
+        height: 3vw;
+    }
+
+    .pedido-payment-info strong {
+        font-size: 2.5vw;
+    }
+
+    .pedido-payment-info p {
+        font-size: 2vw;
+    }
+
+    .pedido-payment-method svg {
+        width: 5vw;
+        height: 5vw;
+    }
+}
