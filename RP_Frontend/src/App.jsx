@@ -1,40 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import Footer from './components/Footer'
-import Header from './components/Header'
-function App() {
-  const [count, setCount] = useState(0)
 
-  return (
-    <>
-      <Header />
+import React, { Component } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./App.css";
 
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      
-      <Footer />
-    </>
-  )
+// Componentes persistentes
+import Header from "./components/header";
+import Footer from "./components/footer";
+
+// Importación de vistas
+import Login from "./viewers/Login";
+import Signin from "./viewers/Signin";
+import Menu from "./viewers/menu";
+import Categorias from "./viewers/categorias";
+import Producto from "./viewers/producto";
+import Carrito from "./viewers/carrito";
+import Pedidos from "./viewers/pedidos";
+import Checkout from "./viewers/checkout";
+import Perfil from "./viewers/perfil";
+import PanelAdmin from "./viewers/paneladmin";
+
+// Componente principal
+class App extends Component {
+
+    render() {
+        return (
+            <BrowserRouter>
+
+                <div className="app-container">
+
+                    {/* Encabezado persistente */}
+                    <Header />
+
+                    {/* Contenido de las distintas vistas */}
+                    <main className="main-content">
+
+                        <Routes>
+
+                            <Route path="/" element={<Menu />} />
+
+                            <Route path="/login" element={<Login />} />
+
+                            <Route path="/signin" element={<Signin />} />
+
+                            <Route path="/categorias" element={<Categorias />} />
+
+                            <Route path="/producto/:id" element={<Producto />} />
+
+                            <Route path="/carrito" element={<Carrito />} />
+
+                            <Route path="/pedidos" element={<Pedidos />} />
+
+                            <Route path="/perfil" element={<Perfil />} />
+
+                            <Route path="/paneladmin" element={<PanelAdmin />} />
+
+                        </Routes>
+
+                    </main>
+
+                    {/* Pie de página persistente */}
+                    <Footer />
+
+                </div>
+
+            </BrowserRouter>
+        );
+    }
 }
 
-export default App
+export default App;

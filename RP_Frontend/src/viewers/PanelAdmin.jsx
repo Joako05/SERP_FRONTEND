@@ -8,3 +8,5 @@ function PanelAdmin() {
         </div>
     )
 }
+
+export default PanelAdmin;

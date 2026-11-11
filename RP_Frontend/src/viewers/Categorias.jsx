@@ -8,3 +8,5 @@ function Categorias() {
         </div>
     )
 }
+
+export default Categorias;

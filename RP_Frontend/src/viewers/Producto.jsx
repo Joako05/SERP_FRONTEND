@@ -8,3 +8,5 @@ function Producto() {
         </div>
     )
 }
+
+export default Producto;
