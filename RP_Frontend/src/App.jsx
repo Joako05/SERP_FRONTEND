@@ -15,7 +15,6 @@ import Categorias from "./viewers/categorias";
 import Producto from "./viewers/producto";
 import Carrito from "./viewers/carrito";
 import Pedidos from "./viewers/pedidos";
-import Checkout from "./viewers/checkout";
 import Perfil from "./viewers/perfil";
 import PanelAdmin from "./viewers/paneladmin";
 

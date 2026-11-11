@@ -1,6 +1,7 @@
 
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { productos } from "../data/Productos";
 
 // Categorías disponibles
 const categorias = [
@@ -26,93 +27,6 @@ const categorias = [
     }
 ];
 
-// Productos de prueba
-const productos = [
-    {
-        id: 1,
-        nombre: "Remera Oversize Negra",
-        categoria: "superiores",
-        precio: 25000,
-        imagen: "/images/remera-oversize.jpg"
-    },
-    {
-        id: 2,
-        nombre: "Buzo Retro Vintage",
-        categoria: "superiores",
-        precio: 42000,
-        imagen: "/images/buzo-retro.jpg"
-    },
-    {
-        id: 3,
-        nombre: "Camisa Urbana",
-        categoria: "superiores",
-        precio: 35000,
-        imagen: "/images/camisa-urbana.jpg"
-    },
-    {
-        id: 4,
-        nombre: "Jean Clásico",
-        categoria: "pantalones",
-        precio: 48000,
-        imagen: "/images/jean-clasico.jpg"
-    },
-    {
-        id: 5,
-        nombre: "Jogger Cargo",
-        categoria: "pantalones",
-        precio: 39000,
-        imagen: "/images/jogger-cargo.jpg"
-    },
-    {
-        id: 6,
-        nombre: "Pantalón Wide Leg",
-        categoria: "pantalones",
-        precio: 45000,
-        imagen: "/images/pantalon-wide-leg.jpg"
-    },
-    {
-        id: 7,
-        nombre: "Gorra Retro Classic",
-        categoria: "gorras",
-        precio: 18000,
-        imagen: "/images/gorra-retro.jpg"
-    },
-    {
-        id: 8,
-        nombre: "Gorra Urbana",
-        categoria: "gorras",
-        precio: 20000,
-        imagen: "/images/gorra-urbana.jpg"
-    },
-    {
-        id: 9,
-        nombre: "Gorra Vintage",
-        categoria: "gorras",
-        precio: 22000,
-        imagen: "/images/gorra-vintage.jpg"
-    },
-    {
-        id: 10,
-        nombre: "Campera de Cuero",
-        categoria: "camperas",
-        precio: 95000,
-        imagen: "/images/chaqueta-cuero.jpg"
-    },
-    {
-        id: 11,
-        nombre: "Campera Urbana",
-        categoria: "camperas",
-        precio: 78000,
-        imagen: "/images/chaqueta-urbana.jpg"
-    },
-    {
-        id: 12,
-        nombre: "Campera Oversize",
-        categoria: "camperas",
-        precio: 85000,
-        imagen: "/images/campera-oversize.jpg"
-    }
-];
 
 class Categorias extends Component {
 
