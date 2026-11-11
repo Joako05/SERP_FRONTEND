@@ -815,3 +815,198 @@
         flex-wrap: wrap;
     }
 }
+
+/* ============================= */
+/* GESTIÓN DE PEDIDOS */
+/* ============================= */
+
+.admin-orders {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5vh;
+}
+
+.admin-order-card {
+    padding: 2.5vh 2vw;
+    border: 1px solid #ddd;
+    border-radius: 0.7vw;
+    background: #fff;
+}
+
+.admin-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 2vh;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-order-header h3 {
+    font-size: 1.25vw;
+    margin-bottom: 0.7vh;
+}
+
+.admin-order-header p {
+    color: #777;
+    font-size: 0.85vw;
+}
+
+.admin-order-status {
+    padding: 0.8vh 1.2vw;
+    background: #fff3cd;
+    color: #856404;
+    border-radius: 2vw;
+    font-size: 0.85vw;
+    font-weight: bold;
+}
+
+.admin-order-client,
+.admin-order-products {
+    padding: 2vh 0;
+    border-bottom: 1px solid #eee;
+}
+
+.admin-order-client h4,
+.admin-order-products h4 {
+    font-size: 1vw;
+    margin-bottom: 1.5vh;
+}
+
+.admin-order-client p {
+    font-size: 0.9vw;
+    margin-bottom: 0.8vh;
+    color: #555;
+}
+
+.admin-order-product {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2vw;
+    padding: 1.2vh 0;
+}
+
+.admin-order-product strong,
+.admin-order-product span {
+    font-size: 0.9vw;
+}
+
+.admin-order-product p {
+    margin-top: 0.5vh;
+    color: #777;
+    font-size: 0.85vw;
+}
+
+.admin-order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2vw;
+    padding-top: 2vh;
+}
+
+.admin-order-total {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7vh;
+}
+
+.admin-order-total span {
+    color: #777;
+    font-size: 0.85vw;
+}
+
+.admin-order-total strong {
+    font-size: 1.3vw;
+}
+
+.admin-order-management {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8vh;
+}
+
+.admin-order-management label {
+    font-size: 0.85vw;
+    font-weight: bold;
+}
+
+.admin-order-management select {
+    min-width: 12vw;
+    padding: 1vh 1vw;
+    border: 1px solid #ccc;
+    border-radius: 0.4vw;
+    font-size: 0.9vw;
+    background: white;
+}
+
+@media (max-width: 768px) {
+
+    .admin-order-card {
+        padding: 2vh 3vw;
+        border-radius: 2vw;
+    }
+
+    .admin-order-header h3 {
+        font-size: 4vw;
+    }
+
+    .admin-order-header p,
+    .admin-order-status,
+    .admin-order-client p,
+    .admin-order-product strong,
+    .admin-order-product span,
+    .admin-order-product p,
+    .admin-order-total span,
+    .admin-order-management label {
+        font-size: 3vw;
+    }
+
+    .admin-order-client h4,
+    .admin-order-products h4 {
+        font-size: 3.5vw;
+    }
+
+    .admin-order-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .admin-order-total strong {
+        font-size: 4vw;
+    }
+
+    .admin-order-management {
+        width: 100%;
+    }
+
+    .admin-order-management select {
+        width: 100%;
+        font-size: 3vw;
+        border-radius: 1vw;
+    }
+}
+.admin-order-management .admin-delete-button {
+    margin-top: 1vh;
+    padding: 1vh 1.2vw;
+    border: none;
+    border-radius: 0.4vw;
+    background-color: #dc3545;
+    color: white;
+    font-size: 0.85vw;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.admin-order-management .admin-delete-button:hover {
+    background-color: #b02a37;
+}
+
+@media (max-width: 768px) {
+    .admin-order-management .admin-delete-button {
+        width: 100%;
+        padding: 1.5vh 3vw;
+        border-radius: 1vw;
+        font-size: 3vw;
+    }
+}   

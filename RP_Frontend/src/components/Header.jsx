@@ -1,6 +1,7 @@
 
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
+import { cerrarSesion } from "../data/Usuarios";
 
 class Header extends Component {
 
@@ -27,13 +28,10 @@ class Header extends Component {
     };
 
     // Cerrar sesión
- cerrarSesion = () => {
-    localStorage.removeItem("token");
-
-    this.setState({
-        menuAbierto: false
-    });
-};
+    cerrarSesion = () => {
+        cerrarSesion();
+        this.cerrarMenu();
+    };
 
     render() {
 
@@ -49,7 +47,6 @@ class Header extends Component {
 
                 </div>
 
-
                 {/* NAVEGACIÓN */}
                 <nav className="header-navigation">
 
@@ -62,7 +59,6 @@ class Header extends Component {
                         Categorías
                     </Link>
 
-
                     {/* CARRITO */}
                     <Link
                         to="/carrito"
@@ -70,7 +66,6 @@ class Header extends Component {
                         aria-label="Ir al carrito"
                         onClick={this.cerrarMenu}
                     >
-
                         <svg
                             viewBox="0 0 24 24"
                             className="header-icon"
@@ -84,9 +79,7 @@ class Header extends Component {
                             <circle cx="20" cy="21" r="1" />
                             <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
                         </svg>
-
                     </Link>
-
 
                     {/* MENÚ DEL USUARIO */}
                     <div className="header-user-container">
@@ -98,7 +91,6 @@ class Header extends Component {
                             aria-expanded={this.state.menuAbierto}
                             aria-haspopup="true"
                         >
-
                             <svg
                                 viewBox="0 0 24 24"
                                 className="header-icon"
@@ -111,9 +103,7 @@ class Header extends Component {
                                 <circle cx="12" cy="8" r="4" />
                                 <path d="M5 21a7 7 0 0 1 14 0" />
                             </svg>
-
                         </button>
-
 
                         {/* DESPLEGABLE */}
                         {this.state.menuAbierto && (
@@ -127,12 +117,19 @@ class Header extends Component {
                                     Mi perfil
                                 </Link>
 
-                              <Link
+                                <Link
+                                    to="/mispedidos"
+                                    onClick={this.cerrarMenu}
+                                >
+                                    Ver mis pedidos
+                                </Link>
+
+                                <Link
                                     to="/login"
                                     onClick={this.cerrarSesion}
-                                    >
+                                >
                                     Cerrar sesión
-                            </Link>
+                                </Link>
 
                             </div>
 

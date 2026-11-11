@@ -15,6 +15,7 @@ import Categorias from "./viewers/categorias";
 import Producto from "./viewers/producto";
 import Carrito from "./viewers/carrito";
 import Pedidos from "./viewers/pedidos";
+import Mispedidos from "./viewers/Mispedidos";
 import Perfil from "./viewers/perfil";
 import PanelAdmin from "./viewers/paneladmin";
 
@@ -48,6 +49,8 @@ class App extends Component {
                             <Route path="/carrito" element={<Carrito />} />
 
                             <Route path="/pedidos" element={<Pedidos />} />
+
+                            <Route path="/mispedidos" element={<Mispedidos />} />
 
                             <Route path="/perfil" element={<Perfil />} />
 

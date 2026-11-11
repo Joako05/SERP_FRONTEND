@@ -9,6 +9,11 @@ import {
     obtenerUsuarios,
     guardarUsuarios
 } from "../data/Usuarios";
+import {
+    obtenerPedidos,
+    actualizarEstadoPedido,
+    eliminarPedido
+} from "../data/Pedidos";
 import "./PanelAdmin.css";
 
 
@@ -48,7 +53,8 @@ class PanelAdmin extends Component {
         correoUsuario: "",
         telefonoUsuario: "",
         direccionUsuario: "",
-        errorUsuario: ""
+        errorUsuario: "",
+        pedidos: [],
     };
   }
 
@@ -56,19 +62,25 @@ componentDidMount() {
     this.setState({
         categorias: obtenerCategorias(),
         productos: obtenerProductos(),
-        usuarios: obtenerUsuarios()
+        usuarios: obtenerUsuarios(),
+        pedidos: obtenerPedidos()
     });
 }
-  cambiarModulo = (modulo) => {
-    this.setState({
-      moduloActivo: modulo,
-      mostrarFormularioCategoria: false,
-      nombreCategoria: "",
-      categoriaEditandoId: null,
-      errorCategoria: ""
-    });
-  };
+cambiarModulo = (modulo) => {
 
+    this.setState({
+        moduloActivo: modulo,
+        mostrarFormularioCategoria: false,
+        nombreCategoria: "",
+        categoriaEditandoId: null,
+        errorCategoria: "",
+
+        // Actualizamos los pedidos al entrar en su módulo.
+        pedidos: modulo === "pedidos"
+            ? obtenerPedidos()
+            : this.state.pedidos
+    });
+};
   abrirFormularioCategoria = () => {
     this.setState({
       mostrarFormularioCategoria: true,
@@ -1201,26 +1213,273 @@ renderProductos() {
     );
 }
 
+cambiarEstadoPedido = (id, nuevoEstado) => {
 
-  renderPedidos() {
-    return (
-      <div className="admin-module-content">
-        <div className="admin-module-header">
-          <div>
-            <h2>Pedidos</h2>
-            <p>Consultá y gestioná los pedidos de los clientes.</p>
-          </div>
-        </div>
-
-        <div className="admin-empty-state">
-          <h3>Pedidos recientes</h3>
-          <p>
-            Aquí aparecerán los pedidos realizados por los clientes.
-          </p>
-        </div>
-      </div>
+    const actualizado = actualizarEstadoPedido(
+        id,
+        nuevoEstado
     );
-  }
+
+    if (!actualizado) {
+        window.alert(
+            "No se pudo actualizar el estado del pedido."
+        );
+        return;
+    }
+
+    this.setState({
+        pedidos: obtenerPedidos()
+    });
+};
+eliminarPedidoAdmin = (id) => {
+    const pedido = this.state.pedidos.find(
+        pedido => Number(pedido.id) === Number(id)
+    );
+
+    if (!pedido || pedido.estado !== "Cancelado") {
+        window.alert(
+            "Solo se pueden eliminar pedidos que estén cancelados."
+        );
+        return;
+    }
+
+    const confirmar = window.confirm(
+        `¿Estás seguro de que querés eliminar el pedido #${id}? Esta acción no se puede deshacer.`
+    );
+
+    if (!confirmar) return;
+
+    const eliminado = eliminarPedido(id);
+
+    if (!eliminado) {
+        window.alert("No se pudo eliminar el pedido.");
+        return;
+    }
+
+    this.setState({
+        pedidos: obtenerPedidos()
+    });
+};
+
+
+renderPedidos() {
+
+    const { pedidos } = this.state;
+
+    const pedidosOrdenados = [...pedidos].sort(
+        (a, b) => new Date(b.fecha) - new Date(a.fecha)
+    );
+
+    const formatearPrecio = (precio) => {
+        return Number(precio || 0).toLocaleString("es-AR", {
+            style: "currency",
+            currency: "ARS",
+            maximumFractionDigits: 2
+        });
+    };
+
+    const formatearFecha = (fecha) => {
+        const fechaPedido = new Date(fecha);
+
+        if (Number.isNaN(fechaPedido.getTime())) {
+            return "Fecha no disponible";
+        }
+
+        return fechaPedido.toLocaleString("es-AR", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
+        });
+    };
+
+    return (
+        <div className="admin-module-content">
+
+            <div className="admin-module-header">
+                <div>
+                    <h2>Pedidos</h2>
+                    <p>
+                        Consultá y gestioná los pedidos de los clientes.
+                    </p>
+                </div>
+            </div>
+
+            <div className="admin-order-list">
+
+                <div className="admin-list-title">
+                    <h3>Listado de pedidos</h3>
+                    <span>{pedidos.length} pedidos</span>
+                </div>
+
+                {pedidosOrdenados.length > 0 ? (
+
+                    <div className="admin-orders">
+
+                        {pedidosOrdenados.map(pedido => (
+
+                            <article
+                                className="admin-order-card"
+                                key={pedido.id}
+                            >
+
+                                <div className="admin-order-header">
+
+                                    <div>
+                                        <h3>
+                                            Pedido #{pedido.id}
+                                        </h3>
+
+                                        <p>
+                                            {formatearFecha(pedido.fecha)}
+                                        </p>
+                                    </div>
+
+                                    <span className="admin-order-status">
+                                        {pedido.estado || "Pendiente"}
+                                    </span>
+
+                                </div>
+
+                                <div className="admin-order-client">
+
+                                    <h4>Datos del cliente</h4>
+
+                                    <p>
+                                        <strong>Nombre:</strong>{" "}
+                                        {pedido.cliente?.nombre || "No disponible"}{" "}
+                                        {pedido.cliente?.apellido || ""}
+                                    </p>
+
+                                    <p>
+                                        <strong>Correo:</strong>{" "}
+                                        {pedido.cliente?.correo || "No disponible"}
+                                    </p>
+
+                                    <p>
+                                        <strong>ID de usuario:</strong>{" "}
+                                        {pedido.usuarioId}
+                                    </p>
+
+                                    <p>
+                                        <strong>Dirección de entrega:</strong>{" "}
+                                        {pedido.direccion}
+                                    </p>
+
+                                    <p>
+                                        <strong>Método de pago:</strong>{" "}
+                                        {pedido.metodoPago}
+                                    </p>
+
+                                </div>
+
+                                <div className="admin-order-products">
+
+                                    <h4>Productos comprados</h4>
+
+                                    {pedido.productos.map((producto, index) => (
+
+                                        <div
+                                            className="admin-order-product"
+                                            key={`${pedido.id}-${producto.id}-${index}`}
+                                        >
+
+                                            <div>
+                                                <strong>
+                                                    {producto.nombre}
+                                                </strong>
+
+                                                <p>
+                                                    Cantidad: {producto.cantidad}
+                                                </p>
+                                            </div>
+
+                                            <span>
+                                                {formatearPrecio(
+                                                    Number(producto.precio) *
+                                                    Number(producto.cantidad)
+                                                )}
+                                            </span>
+
+                                        </div>
+
+                                    ))}
+
+                                </div>
+
+                                <div className="admin-order-footer">
+
+                                    <div className="admin-order-total">
+                                        <span>Total del pedido</span>
+
+                                        <strong>
+                                            {formatearPrecio(pedido.total)}
+                                        </strong>
+                                    </div>
+
+                                <div className="admin-order-management">
+
+                                    <label htmlFor={`estado-pedido-${pedido.id}`}>
+                                        Estado del pedido
+                                    </label>
+
+                                    <select
+                                        id={`estado-pedido-${pedido.id}`}
+                                        value={pedido.estado || "Pendiente"}
+                                        onChange={event =>
+                                            this.cambiarEstadoPedido(
+                                                pedido.id,
+                                                event.target.value
+                                            )
+                                        }
+                                    >
+                                        <option value="Pendiente">Pendiente</option>
+                                        <option value="En preparación">En preparación</option>
+                                        <option value="Enviado">Enviado</option>
+                                        <option value="Entregado">Entregado</option>
+                                        <option value="Cancelado">Cancelado</option>
+                                    </select>
+
+                                    {pedido.estado === "Cancelado" && (
+                                        <button
+                                            type="button"
+                                            className="admin-delete-button"
+                                            onClick={() => this.eliminarPedidoAdmin(pedido.id)}
+                                        >
+                                            Eliminar pedido
+                                        </button>
+                                    )}
+
+                                </div>
+
+                                </div>
+
+                            </article>
+
+                        ))}
+
+                    </div>
+
+                ) : (
+
+                    <div className="admin-empty-state">
+                        <h3>No hay pedidos registrados</h3>
+
+                        <p>
+                            Cuando los clientes realicen compras,
+                            aparecerán en este apartado.
+                        </p>
+                    </div>
+
+                )}
+
+            </div>
+
+        </div>
+    );
+}
+
 
   renderContenido() {
     switch (this.state.moduloActivo) {

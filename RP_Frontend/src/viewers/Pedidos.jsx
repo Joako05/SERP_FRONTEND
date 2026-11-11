@@ -1,20 +1,30 @@
 
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+
+import {
+    obtenerPedidos,
+    guardarPedidos,
+    generarIdPedido
+} from "../data/Pedidos";
+
+import { obtenerUsuarioActivo } from "../data/Usuarios";
 
 class Pedidos extends Component {
 
-    constructor(props) {
-        super(props);
+constructor(props) {
+    super(props);
 
-      
-this.state = {
-    productos: this.obtenerCarrito(),
-    direccion: localStorage.getItem("direccionEntrega") || "",
-    metodoPago: "debito",
-    mensajeError: "",
-    pagoRealizado: false
-};
+    this.state = {
+        productos: this.obtenerCarrito(),
+        direccion: localStorage.getItem("direccionEntrega") || "",
+        metodoPago: "debito",
+        mensajeError: "",
+        pagoRealizado: false,
+        usuario: obtenerUsuarioActivo(),
+        pedidoId: null
+    };
+
     }
 
     obtenerCarrito = () => {
@@ -47,35 +57,145 @@ this.state = {
         );
     };
 
-    finalizarCompra = () => {
 
-        const { direccion, productos } = this.state;
+finalizarCompra = () => {
 
-        if (productos.length === 0) {
+    const {
+        direccion,
+        productos,
+        metodoPago
+    } = this.state;
+
+    // Comprobamos que exista una sesión activa.
+    const usuario = obtenerUsuarioActivo();
+
+    if (!usuario) {
+        this.setState({
+            usuario: null,
+            mensajeError: "Necesitás iniciar sesión para realizar una compra."
+        });
+        return;
+    }
+
+    if (productos.length === 0) {
+        this.setState({
+            mensajeError: "No hay productos para comprar."
+        });
+        return;
+    }
+
+    if (!direccion.trim()) {
+        this.setState({
+            mensajeError: "Ingresá tu dirección de entrega para continuar."
+        });
+        return;
+    }
+
+    const total = productos.reduce(
+        (acumulado, producto) =>
+            acumulado +
+            Number(producto.precio) * Number(producto.cantidad),
+        0
+    );
+
+    if (
+        !Number.isFinite(total) ||
+        total <= 0 ||
+        productos.some(producto =>
+            !Number.isFinite(Number(producto.precio)) ||
+            Number(producto.precio) <= 0 ||
+            !Number.isInteger(Number(producto.cantidad)) ||
+            Number(producto.cantidad) <= 0
+        )
+    ) {
+        this.setState({
+            mensajeError: "Los productos del carrito contienen datos inválidos."
+        });
+        return;
+    }
+
+    try {
+
+        // Recuperamos los pedidos existentes.
+        const pedidosActuales = obtenerPedidos();
+
+        // Creamos una copia de los productos comprados.
+        const productosPedido = productos.map(producto => ({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: Number(producto.precio),
+            cantidad: Number(producto.cantidad),
+            imagen: producto.imagen || ""
+        }));
+
+        // Construimos el nuevo pedido.
+        const nuevoPedido = {
+            id: generarIdPedido(pedidosActuales),
+
+            usuarioId: usuario.id,
+
+            cliente: {
+                nombre: usuario.nombre,
+                apellido: usuario.apellido,
+                correo: usuario.correo
+            },
+
+            productos: productosPedido,
+
+            direccion: direccion.trim(),
+
+            metodoPago,
+
+            total,
+
+            fecha: new Date().toISOString(),
+
+            estado: "Pendiente"
+        };
+
+        // Guardamos el pedido antes de vaciar el carrito.
+        const guardado = guardarPedidos([
+            ...pedidosActuales,
+            nuevoPedido
+        ]);
+
+        if (!guardado) {
             this.setState({
-                mensajeError: "No hay productos para comprar."
+                mensajeError: "No se pudo registrar el pedido. Intentá nuevamente."
             });
             return;
         }
 
-        if (!direccion.trim()) {
-            this.setState({
-                mensajeError: "Ingresá tu dirección de entrega para continuar."
-            });
-            return;
-        }
+        // Guardamos los datos de entrega y pago.
+        localStorage.setItem(
+            "direccionEntrega",
+            direccion.trim()
+        );
 
-        localStorage.setItem("direccionEntrega", direccion.trim());
-        localStorage.setItem("metodoPago", this.state.metodoPago);
+        localStorage.setItem(
+            "metodoPago",
+            metodoPago
+        );
 
         // Simulación de pago: no se realiza ningún cobro real.
+        // El carrito se elimina solamente después de guardar el pedido.
         localStorage.removeItem("carrito");
 
         this.setState({
             pagoRealizado: true,
+            pedidoId: nuevoPedido.id,
             mensajeError: ""
         });
-    };
+
+    } catch (error) {
+
+        console.error("Error al finalizar la compra:", error);
+
+        this.setState({
+            mensajeError: "Ocurrió un error al procesar el pedido. Intentá nuevamente."
+        });
+    }
+};
 
     render() {
 
@@ -85,32 +205,48 @@ this.state = {
             mensajeError,
             pagoRealizado
         } = this.state;
+    if (!this.state.usuario) {
+        return <Navigate to="/login" replace />;
+    }
 
-        if (pagoRealizado) {
-            return (
-                <main className="pedido-success-container">
+if (pagoRealizado) {
+    return (
+        <main className="pedido-success-container">
+            <div className="pedido-success-card">
 
-                    <div className="pedido-success-card">
+                <div className="pedido-success-icon">
+                    ✓
+                </div>
 
-                        <div className="pedido-success-icon">
-                            ✓
-                        </div>
+                <h1>¡Compra realizada!</h1>
 
-                        <h1>¡Compra realizada!</h1>
+                <p>
+                    Tu pedido fue registrado correctamente.
+                </p>
 
-                        <p>
-                            Pago realizado, gracias por su compra
-                        </p>
+                <p>
+                    Número de pedido:{" "}
+                    <strong>#{this.state.pedidoId}</strong>
+                </p>
 
-                        <Link to="/" className="pedido-success-button">
-                            Volver al inicio
-                        </Link>
+                <Link
+                    to="/mispedidos"
+                    className="pedido-success-button"
+                >
+                    Ver mis pedidos
+                </Link>
 
-                    </div>
+                <Link
+                    to="/"
+                    className="pedido-back-link"
+                >
+                    Volver al inicio
+                </Link>
 
-                </main>
-            );
-        }
+            </div>
+        </main>
+    );
+}
 
         if (productos.length === 0) {
             return (

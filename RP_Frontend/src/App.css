@@ -12,6 +12,7 @@ body,
 #root {
     width: 100%;
     min-height: 100vh;
+    color:#050505
 }
 
 body {
@@ -647,12 +648,12 @@ body {
     border-radius: 0.5vw;
     outline: none;
     font-size: 0.95vw;
-    background-color: #fffdfb;
+    background-color: #701212;
     transition: border-color 0.2s ease;
 }
 
 .signup-field input:focus {
-    border-color: #8b5e45;
+    border-color: #a50b0b;
 }
 
 .signup-field input::placeholder {
@@ -804,7 +805,7 @@ body {
 }
 
 .login-field label {
-    color: #3b2921;
+    color: #3b2121;
     font-size: 0.95vw;
     font-weight: 600;
     margin-bottom: 0.8vh;
@@ -817,7 +818,7 @@ body {
     border-radius: 0.5vw;
     outline: none;
     font-size: 0.95vw;
-    background-color: #fffdfb;
+    background-color: #703838;
     transition: border-color 0.2s ease;
 }
 
@@ -835,7 +836,7 @@ body {
     margin-top: 1vh;
     border: none;
     border-radius: 0.5vw;
-    background-color: #4b3025;
+    background-color: #701212;
     color: #ffffff;
     font-size: 1vw;
     font-weight: bold;
@@ -844,7 +845,7 @@ body {
 }
 
 .login-button:hover {
-    background-color: #704b38;
+    background-color: #c00b0b;
 }
 
 .login-message {

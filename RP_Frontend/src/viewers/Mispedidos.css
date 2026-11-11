@@ -1,0 +1,257 @@
+
+.mis-pedidos-container {
+    width: 85vw;
+    min-height: 65vh;
+    margin: 4vh auto;
+}
+
+.mis-pedidos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2vw;
+    margin-bottom: 4vh;
+}
+
+.mis-pedidos-header h1 {
+    font-size: 2.2vw;
+    margin-bottom: 1vh;
+}
+
+.mis-pedidos-header p {
+    font-size: 1vw;
+    color: #777;
+}
+
+.volver-tienda,
+.mis-pedidos-vacio a {
+    display: inline-block;
+    padding: 1.2vh 2vw;
+    background: #812323;
+    color: white;
+    text-decoration: none;
+    border-radius: 0.4vw;
+    font-size: 0.95vw;
+}
+
+.lista-mis-pedidos {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
+}
+
+.pedido-card {
+    border: 1px solid #ddd;
+    border-radius: 0.7vw;
+    padding: 2.5vh 2vw;
+    background: white;
+}
+
+.pedido-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 2vh;
+    border-bottom: 1px solid #eee;
+}
+
+.pedido-card-header h2 {
+    font-size: 1.3vw;
+    margin-bottom: 0.8vh;
+}
+
+.pedido-card-header p {
+    color: #777;
+    font-size: 0.9vw;
+}
+
+.pedido-estado {
+    padding: 0.8vh 1.2vw;
+    border-radius: 2vw;
+    font-size: 0.85vw;
+    font-weight: bold;
+}
+
+.estado-pendiente {
+    background: #fff3cd;
+    color: #856404;
+}
+
+.estado-preparacion {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.estado-enviado {
+    background: #e0e7ff;
+    color: #3730a3;
+}
+
+.estado-entregado {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.estado-cancelado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.pedido-productos {
+    display: flex;
+    flex-direction: column;
+}
+
+.pedido-producto {
+    display: flex;
+    align-items: center;
+    gap: 2vw;
+    padding: 2vh 0;
+    border-bottom: 1px solid #eee;
+}
+
+.pedido-producto img {
+    width: 7vw;
+    height: 9vh;
+    object-fit: cover;
+    border-radius: 0.4vw;
+}
+
+.pedido-producto-info {
+    flex: 1;
+}
+
+.pedido-producto-info h3 {
+    font-size: 1vw;
+    margin-bottom: 0.8vh;
+}
+
+.pedido-producto-info p {
+    color: #777;
+    font-size: 0.85vw;
+    margin-top: 0.4vh;
+}
+
+.pedido-producto > strong {
+    font-size: 1vw;
+}
+
+.pedido-card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 2vw;
+    padding-top: 2vh;
+}
+
+.pedido-card-footer p {
+    font-size: 0.9vw;
+    margin-bottom: 0.8vh;
+}
+
+.pedido-total {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.7vh;
+}
+
+.pedido-total span {
+    color: #777;
+    font-size: 0.9vw;
+}
+
+.pedido-total strong {
+    font-size: 1.4vw;
+}
+
+.mis-pedidos-vacio {
+    min-height: 35vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    gap: 2vh;
+    border: 1px solid #ddd;
+    border-radius: 0.7vw;
+    padding: 4vh 3vw;
+}
+
+.mis-pedidos-vacio h2 {
+    font-size: 1.5vw;
+}
+
+.mis-pedidos-vacio p {
+    color: #777;
+    font-size: 1vw;
+}
+
+@media (max-width: 768px) {
+    .mis-pedidos-container {
+        width: 92vw;
+    }
+
+    .mis-pedidos-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .mis-pedidos-header h1 {
+        font-size: 6vw;
+    }
+
+    .mis-pedidos-header p,
+    .pedido-card-header p,
+    .pedido-producto-info p,
+    .pedido-card-footer p,
+    .pedido-total span {
+        font-size: 3vw;
+    }
+
+    .volver-tienda,
+    .mis-pedidos-vacio a {
+        font-size: 3vw;
+    }
+
+    .pedido-card {
+        padding: 2vh 3vw;
+        border-radius: 2vw;
+    }
+
+    .pedido-card-header h2,
+    .pedido-producto-info h3,
+    .pedido-producto > strong {
+        font-size: 3.5vw;
+    }
+
+    .pedido-estado {
+        font-size: 2.5vw;
+    }
+
+    .pedido-producto img {
+        width: 18vw;
+        height: 12vh;
+    }
+
+    .pedido-card-footer {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .pedido-total {
+        align-items: flex-start;
+    }
+
+    .pedido-total strong {
+        font-size: 4vw;
+    }
+
+    .mis-pedidos-vacio h2 {
+        font-size: 4.5vw;
+    }
+
+    .mis-pedidos-vacio p {
+        font-size: 3vw;
+    }
+}

@@ -1,6 +1,11 @@
 
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+import {
+    obtenerUsuarios,
+    verificarCredenciales,
+    guardarSesion
+} from "../data/Usuarios";
 
 class Login extends Component {
     constructor(props) {
@@ -10,7 +15,9 @@ class Login extends Component {
             correo: "",
             password: "",
             error: "",
-            exito: ""
+            exito: "",
+            cargando: false,
+            redirigir: false
         };
     }
 
@@ -40,25 +47,83 @@ class Login extends Component {
         return null;
     };
 
-    handleSubmit = (e) => {
+    handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (this.state.cargando) {
+            return;
+        }
 
         const error = this.validarFormulario();
 
         if (error) {
-            this.setState({
-                error,
-                exito: ""
-            });
-
+            this.setState({ error, exito: "" });
             return;
         }
 
-        // Simulación local: todavía no se inicia una sesión real.
         this.setState({
+            cargando: true,
             error: "",
-            exito: "¡Datos validados correctamente! El inicio de sesión estará disponible próximamente."
+            exito: ""
         });
+
+        try {
+            const correoNormalizado = this.state.correo.trim().toLowerCase();
+            const password = this.state.password;
+
+            const usuarios = obtenerUsuarios();
+
+            const usuarioEncontrado = usuarios.find(
+                usuario =>
+                    usuario.correo?.toLowerCase() === correoNormalizado
+            );
+
+            if (!usuarioEncontrado) {
+                this.setState({
+                    cargando: false,
+                    error: "El correo electrónico o la contraseña son incorrectos."
+                });
+                return;
+            }
+
+            const credencialesValidas = await verificarCredenciales(
+                password,
+                usuarioEncontrado
+            );
+
+            if (!credencialesValidas) {
+                this.setState({
+                    cargando: false,
+                    error: "El correo electrónico o la contraseña son incorrectos."
+                });
+                return;
+            }
+
+            const sesionGuardada = guardarSesion(usuarioEncontrado);
+
+            if (!sesionGuardada) {
+                this.setState({
+                    cargando: false,
+                    error: "No se pudo iniciar la sesión. Intentá nuevamente."
+                });
+                return;
+            }
+
+            this.setState({
+                cargando: false,
+                error: "",
+                exito: "¡Inicio de sesión correcto!",
+                redirigir: true
+            });
+
+        } catch (error) {
+            console.error("Error durante el inicio de sesión:", error);
+
+            this.setState({
+                cargando: false,
+                error: "No se pudo procesar el inicio de sesión. Intentá nuevamente."
+            });
+        }
     };
 
     render() {
@@ -66,25 +131,28 @@ class Login extends Component {
             correo,
             password,
             error,
-            exito
+            exito,
+            cargando,
+            redirigir
         } = this.state;
+
+        if (redirigir) {
+            return <Navigate to="/" replace />;
+        }
 
         return (
             <section className="login-container">
                 <div className="login-card">
 
                     <div className="login-header">
-                        <h1>Bienvenido nuevamente</h1>
+                        <h1>Iniciar sesión</h1>
                         <p>Ingresá a tu cuenta de Retro Passion</p>
                     </div>
 
                     <form onSubmit={this.handleSubmit}>
 
                         <div className="login-field">
-                            <label htmlFor="correo">
-                                Correo electrónico
-                            </label>
-
+                            <label htmlFor="correo">Correo electrónico</label>
                             <input
                                 type="email"
                                 id="correo"
@@ -97,15 +165,12 @@ class Login extends Component {
                         </div>
 
                         <div className="login-field">
-                            <label htmlFor="password">
-                                Contraseña
-                            </label>
-
+                            <label htmlFor="password">Contraseña</label>
                             <input
                                 type="password"
                                 id="password"
                                 name="password"
-                                placeholder="Ingresá tu contraseña"
+                                placeholder="Tu contraseña"
                                 value={password}
                                 onChange={this.handleChange}
                                 autoComplete="current-password"
@@ -127,8 +192,9 @@ class Login extends Component {
                         <button
                             type="submit"
                             className="login-button"
+                            disabled={cargando}
                         >
-                            Iniciar sesión
+                            {cargando ? "Ingresando..." : "Iniciar sesión"}
                         </button>
 
                     </form>
@@ -136,9 +202,7 @@ class Login extends Component {
                     <div className="login-signup-link">
                         <p>
                             ¿Todavía no tenés una cuenta?{" "}
-                            <Link to="/signup">
-                                Registrate
-                            </Link>
+                            <Link to="/signup">Registrate</Link>
                         </p>
                     </div>
 

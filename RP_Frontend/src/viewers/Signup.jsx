@@ -4,7 +4,8 @@ import { Link } from "react-router-dom";
 import {
     obtenerUsuarios,
     guardarUsuarios,
-    generarIdUsuario
+    generarIdUsuario,
+    crearCredenciales
 } from "../data/Usuarios";
 
 class Signup extends Component {
@@ -20,7 +21,8 @@ class Signup extends Component {
             password: "",
             confirmarPassword: "",
             error: "",
-            exito: ""
+            exito: "",
+            cargando: false
         };
     }
 
@@ -80,70 +82,103 @@ class Signup extends Component {
         return null;
     };
 
+    handleSubmit = async (e) => {
+        e.preventDefault();
 
-handleSubmit = (e) => {
-    e.preventDefault();
+        if (this.state.cargando) {
+            return;
+        }
 
-    const error = this.validarFormulario();
+        const error = this.validarFormulario();
 
-    if (error) {
-        this.setState({ error, exito: "" });
-        return;
-    }
+        if (error) {
+            this.setState({ error, exito: "" });
+            return;
+        }
 
-    const {
-        nombre,
-        apellido,
-        correo,
-        telefono,
-        direccion
-    } = this.state;
-
-    const usuariosActuales = obtenerUsuarios();
-
-    const correoNormalizado = correo.trim().toLowerCase();
-
-    const correoExistente = usuariosActuales.some(
-        usuario => usuario.correo.toLowerCase() === correoNormalizado
-    );
-
-    if (correoExistente) {
         this.setState({
-            error: "Ya existe una cuenta registrada con ese correo electrónico.",
+            cargando: true,
+            error: "",
             exito: ""
         });
-        return;
-    }
 
-    const nuevoUsuario = {
-        id: generarIdUsuario(usuariosActuales),
-        nombre: nombre.trim(),
-        apellido: apellido.trim(),
-        correo: correoNormalizado,
-        telefono: telefono.trim(),
-        direccion: direccion.trim()
+        try {
+            const {
+                nombre,
+                apellido,
+                correo,
+                telefono,
+                direccion,
+                password
+            } = this.state;
+
+            const usuariosActuales = obtenerUsuarios();
+            const correoNormalizado = correo.trim().toLowerCase();
+
+            const correoExistente = usuariosActuales.some(
+                usuario =>
+                    usuario.correo?.toLowerCase() === correoNormalizado
+            );
+
+            if (correoExistente) {
+                this.setState({
+                    cargando: false,
+                    error: "Ya existe una cuenta registrada con ese correo electrónico."
+                });
+                return;
+            }
+
+            // Generamos la sal y el hash de la contraseña.
+            const credenciales = await crearCredenciales(password);
+
+            const nuevoUsuario = {
+                id: generarIdUsuario(usuariosActuales),
+                nombre: nombre.trim(),
+                apellido: apellido.trim(),
+                correo: correoNormalizado,
+                telefono: telefono.trim(),
+                direccion: direccion.trim(),
+                ...credenciales
+            };
+
+            const nuevosUsuarios = [
+                ...usuariosActuales,
+                nuevoUsuario
+            ];
+
+            const guardado = guardarUsuarios(nuevosUsuarios);
+
+            if (!guardado) {
+                this.setState({
+                    cargando: false,
+                    error: "No se pudo completar el registro. Intentá nuevamente."
+                });
+                return;
+            }
+
+            this.setState({
+                nombre: "",
+                apellido: "",
+                correo: "",
+                telefono: "",
+                direccion: "",
+                password: "",
+                confirmarPassword: "",
+                cargando: false,
+                error: "",
+                exito: "¡Tu cuenta fue registrada correctamente! Ya podés iniciar sesión."
+            });
+
+        } catch (error) {
+            console.error("Error durante el registro:", error);
+
+            this.setState({
+                cargando: false,
+                error: "No se pudo procesar la contraseña. Verificá tu navegador e intentá nuevamente.",
+                exito: ""
+            });
+        }
     };
-
-    const nuevosUsuarios = [
-        ...usuariosActuales,
-        nuevoUsuario
-    ];
-
-    const guardado = guardarUsuarios(nuevosUsuarios);
-
-    if (!guardado) {
-        this.setState({
-            error: "No se pudo completar el registro. Intentá nuevamente.",
-            exito: ""
-        });
-        return;
-    }
-
-    this.setState({
-        error: "",
-        exito: "¡Tu cuenta fue registrada correctamente! Ya podés iniciar sesión."
-    });
-};
 
     render() {
         const {
@@ -155,7 +190,8 @@ handleSubmit = (e) => {
             password,
             confirmarPassword,
             error,
-            exito
+            exito,
+            cargando
         } = this.state;
 
         return (
@@ -276,8 +312,12 @@ handleSubmit = (e) => {
                             </p>
                         )}
 
-                        <button type="submit" className="signup-button">
-                            Crear cuenta
+                        <button
+                            type="submit"
+                            className="signup-button"
+                            disabled={cargando}
+                        >
+                            {cargando ? "Registrando..." : "Crear cuenta"}
                         </button>
 
                     </form>
