@@ -1,6 +1,12 @@
 
 import React, { Component } from "react";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
+
+import {
+    obtenerUsuarioActivo,
+    obtenerUsuarios,
+    actualizarDatosUsuario
+} from "../data/Usuarios";
 
 class Perfil extends Component {
 
@@ -8,41 +14,40 @@ class Perfil extends Component {
         super(props);
 
         this.state = {
-            usuario: this.obtenerUsuario(),
+            usuario: obtenerUsuarioActivo(),
             editando: false,
             mensaje: "",
             tipoMensaje: ""
         };
     }
 
-    obtenerUsuario = () => {
-        try {
-            const usuarioGuardado = localStorage.getItem("usuario");
+    // Escuchar cambios en la sesión
+    componentDidMount() {
+        window.addEventListener(
+            "sesionActualizada",
+            this.actualizarUsuario
+        );
+    }
 
-            const usuario = usuarioGuardado
-                ? JSON.parse(usuarioGuardado)
-                : {};
+    // Dejar de escuchar al desmontar el componente
+    componentWillUnmount() {
+        window.removeEventListener(
+            "sesionActualizada",
+            this.actualizarUsuario
+        );
+    }
 
-            return {
-                nombre: usuario.nombre || "",
-                apellido: usuario.apellido || "",
-                correo: usuario.correo || "",
-                telefono: usuario.telefono || "",
-                direccion: usuario.direccion ||
-                    localStorage.getItem("direccionEntrega") || ""
-            };
-
-        } catch (error) {
-            return {
-                nombre: "",
-                apellido: "",
-                correo: "",
-                telefono: "",
-                direccion: ""
-            };
-        }
+    // Obtener nuevamente los datos del usuario activo
+    actualizarUsuario = () => {
+        this.setState({
+            usuario: obtenerUsuarioActivo(),
+            editando: false,
+            mensaje: "",
+            tipoMensaje: ""
+        });
     };
 
+    // Actualizar un campo del formulario
     handleChange = (event) => {
         const { name, value } = event.target;
 
@@ -56,6 +61,7 @@ class Perfil extends Component {
         });
     };
 
+    // Activar el modo de edición
     editarPerfil = () => {
         this.setState({
             editando: true,
@@ -64,20 +70,31 @@ class Perfil extends Component {
         });
     };
 
+    // Cancelar la edición y recuperar los datos originales
     cancelarEdicion = () => {
         this.setState({
-            usuario: this.obtenerUsuario(),
+            usuario: obtenerUsuarioActivo(),
             editando: false,
             mensaje: "",
             tipoMensaje: ""
         });
     };
 
+    // Guardar los cambios del perfil
     guardarCambios = (event) => {
         event.preventDefault();
 
         const { usuario } = this.state;
 
+        if (!usuario) {
+            this.setState({
+                mensaje: "No se encontró una sesión activa.",
+                tipoMensaje: "error"
+            });
+            return;
+        }
+
+        // Validar campos obligatorios
         if (
             !usuario.nombre.trim() ||
             !usuario.apellido.trim() ||
@@ -92,9 +109,11 @@ class Perfil extends Component {
             return;
         }
 
-        const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(
-            usuario.correo.trim()
-        );
+        // Normalizar el correo
+        const correo = usuario.correo.trim().toLowerCase();
+
+        // Validar formato del correo
+        const emailValido = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(correo);
 
         if (!emailValido) {
             this.setState({
@@ -104,23 +123,57 @@ class Perfil extends Component {
             return;
         }
 
+        // Comprobar que el correo no pertenezca a otro usuario
+        const usuariosRegistrados = obtenerUsuarios();
+
+        const correoExistente = usuariosRegistrados.some(
+            usuarioRegistrado =>
+                String(usuarioRegistrado.id) !== String(usuario.id) &&
+                usuarioRegistrado.correo.trim().toLowerCase() === correo
+        );
+
+        if (correoExistente) {
+            this.setState({
+                mensaje: "Ese correo electrónico ya está registrado.",
+                tipoMensaje: "error"
+            });
+            return;
+        }
+
+        // Preparar los datos que se pueden modificar
+        const datosActualizados = {
+            nombre: usuario.nombre.trim(),
+            apellido: usuario.apellido.trim(),
+            correo: correo,
+            telefono: usuario.telefono.trim(),
+            direccion: usuario.direccion.trim()
+        };
+
         try {
-            const usuarioActualizado = {
-                nombre: usuario.nombre.trim(),
-                apellido: usuario.apellido.trim(),
-                correo: usuario.correo.trim(),
-                telefono: usuario.telefono.trim(),
-                direccion: usuario.direccion.trim()
-            };
 
-            localStorage.setItem(
-                "usuario",
-                JSON.stringify(usuarioActualizado)
-            );
+            // Actualizar el registro dentro de Usuarios.js
+            actualizarDatosUsuario(usuario.id, datosActualizados);
 
+            // Recuperar los datos actualizados
+            const usuarioActualizado = obtenerUsuarioActivo();
+
+            // Verificar que los cambios se hayan guardado
+            const cambiosGuardados =
+                usuarioActualizado &&
+                usuarioActualizado.nombre === datosActualizados.nombre &&
+                usuarioActualizado.apellido === datosActualizados.apellido &&
+                usuarioActualizado.correo === datosActualizados.correo &&
+                usuarioActualizado.telefono === datosActualizados.telefono &&
+                usuarioActualizado.direccion === datosActualizados.direccion;
+
+            if (!cambiosGuardados) {
+                throw new Error("No se pudieron verificar los cambios.");
+            }
+
+            // Mantener sincronizada la dirección utilizada en el checkout
             localStorage.setItem(
                 "direccionEntrega",
-                usuarioActualizado.direccion
+                datosActualizados.direccion
             );
 
             this.setState({
@@ -131,10 +184,12 @@ class Perfil extends Component {
             });
 
         } catch (error) {
+
             this.setState({
                 mensaje: "No se pudieron guardar los cambios.",
                 tipoMensaje: "error"
             });
+
         }
     };
 
@@ -147,6 +202,12 @@ class Perfil extends Component {
             tipoMensaje
         } = this.state;
 
+        // Si no existe una sesión activa, volver al login
+        if (!usuario) {
+            return <Navigate to="/login" replace />;
+        }
+
+        // Mostrar un dato o indicar que no está disponible
         const mostrarDato = (dato) => {
             return dato && dato.trim() !== ""
                 ? dato
@@ -328,6 +389,7 @@ class Perfil extends Component {
 
                             {editando ? (
                                 <>
+
                                     <button
                                         type="button"
                                         className="perfil-cancel-button"
@@ -342,8 +404,10 @@ class Perfil extends Component {
                                     >
                                         Guardar cambios
                                     </button>
+
                                 </>
                             ) : (
+
                                 <button
                                     type="button"
                                     className="perfil-edit-button"
@@ -351,6 +415,7 @@ class Perfil extends Component {
                                 >
                                     Editar información
                                 </button>
+
                             )}
 
                         </div>
@@ -395,9 +460,11 @@ class Perfil extends Component {
                     </section>
 
                     <div className="perfil-footer">
+
                         <Link to="/" className="perfil-back-button">
                             Volver al inicio
                         </Link>
+
                     </div>
 
                 </div>

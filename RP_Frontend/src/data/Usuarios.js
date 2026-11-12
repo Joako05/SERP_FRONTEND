@@ -1,8 +1,16 @@
-
 const ITERACIONES_PBKDF2 = 310000;
+const ITERACIONES_MINIMAS = 100000;
+const ITERACIONES_MAXIMAS = 1000000;
+
 const LONGITUD_SAL = 16;
 const LONGITUD_HASH = 256;
+const LONGITUD_HASH_BYTES = LONGITUD_HASH / 8;
 
+const CLAVE_USUARIOS = "usuarios";
+const CLAVE_SESION = "usuarioActivo";
+const EVENTO_SESION = "sesionActualizada";
+
+// Comprueba que el navegador permita utilizar criptografía.
 const obtenerCrypto = () => {
     if (!window.crypto || !window.crypto.subtle) {
         throw new Error(
@@ -13,6 +21,12 @@ const obtenerCrypto = () => {
     return window.crypto;
 };
 
+// Notifica a los componentes que hubo un cambio en la sesión.
+const notificarCambioSesion = () => {
+    window.dispatchEvent(new Event(EVENTO_SESION));
+};
+
+// Convierte bytes a Base64.
 const convertirABase64 = (bytes) => {
     let texto = "";
 
@@ -23,6 +37,7 @@ const convertirABase64 = (bytes) => {
     return window.btoa(texto);
 };
 
+// Convierte Base64 a bytes.
 const convertirDesdeBase64 = (texto) => {
     const binario = window.atob(texto);
 
@@ -32,6 +47,7 @@ const convertirDesdeBase64 = (texto) => {
     );
 };
 
+// Genera el hash de una contraseña mediante PBKDF2.
 const generarHash = async (password, salt, iteraciones) => {
     const cryptoAPI = obtenerCrypto();
     const encoder = new TextEncoder();
@@ -61,28 +77,56 @@ const generarHash = async (password, salt, iteraciones) => {
 // Recupera los usuarios registrados.
 export const obtenerUsuarios = () => {
     try {
-        const usuariosGuardados = localStorage.getItem("usuarios");
+        const usuariosGuardados = localStorage.getItem(CLAVE_USUARIOS);
 
-        if (usuariosGuardados !== null) {
-            const usuariosParseados = JSON.parse(usuariosGuardados);
-
-            if (Array.isArray(usuariosParseados)) {
-                return usuariosParseados;
-            }
+        if (usuariosGuardados === null) {
+            return [];
         }
 
-        return [];
+        const usuariosParseados = JSON.parse(usuariosGuardados);
+
+        return Array.isArray(usuariosParseados)
+            ? usuariosParseados
+            : [];
+
     } catch (error) {
         console.error("Error al obtener los usuarios:", error);
         return [];
     }
 };
 
-// Guarda la lista de usuarios.
+// Guarda la lista de usuarios y sincroniza la sesión.
 export const guardarUsuarios = (nuevosUsuarios) => {
     try {
-        localStorage.setItem("usuarios", JSON.stringify(nuevosUsuarios));
+        if (!Array.isArray(nuevosUsuarios)) {
+            return false;
+        }
+
+        localStorage.setItem(
+            CLAVE_USUARIOS,
+            JSON.stringify(nuevosUsuarios)
+        );
+
+        // Si el usuario de la sesión fue eliminado,
+        // cerramos automáticamente esa sesión.
+        const sesionGuardada = localStorage.getItem(CLAVE_SESION);
+
+        if (sesionGuardada) {
+            const sesion = JSON.parse(sesionGuardada);
+
+            const usuarioExiste = nuevosUsuarios.some(
+                usuario => Number(usuario.id) === Number(sesion.id)
+            );
+
+            if (!usuarioExiste) {
+                localStorage.removeItem(CLAVE_SESION);
+            }
+        }
+
+        notificarCambioSesion();
+
         return true;
+
     } catch (error) {
         console.error("Error al guardar los usuarios:", error);
         return false;
@@ -91,7 +135,7 @@ export const guardarUsuarios = (nuevosUsuarios) => {
 
 // Genera un ID numérico para el próximo usuario.
 export const generarIdUsuario = (listaUsuarios) => {
-    if (listaUsuarios.length === 0) {
+    if (!listaUsuarios.length) {
         return 1;
     }
 
@@ -100,8 +144,12 @@ export const generarIdUsuario = (listaUsuarios) => {
     return Math.max(...ids) + 1;
 };
 
-// Genera una sal y un hash a partir de la contraseña.
+// Genera una sal aleatoria y un hash de contraseña.
 export const crearCredenciales = async (password) => {
+    if (typeof password !== "string" || password.length === 0) {
+        throw new Error("La contraseña no es válida.");
+    }
+
     const cryptoAPI = obtenerCrypto();
 
     const salt = cryptoAPI.getRandomValues(
@@ -121,19 +169,30 @@ export const crearCredenciales = async (password) => {
     };
 };
 
-// Comprueba si la contraseña ingresada coincide con la registrada.
+// Comprueba si la contraseña coincide con la registrada.
 export const verificarCredenciales = async (password, usuario) => {
     try {
         if (
+            typeof password !== "string" ||
             !usuario ||
-            !usuario.passwordSalt ||
-            !usuario.passwordHash ||
-            !usuario.passwordIteraciones
+            typeof usuario.passwordSalt !== "string" ||
+            typeof usuario.passwordHash !== "string" ||
+            !Number.isInteger(usuario.passwordIteraciones) ||
+            usuario.passwordIteraciones < ITERACIONES_MINIMAS ||
+            usuario.passwordIteraciones > ITERACIONES_MAXIMAS
         ) {
             return false;
         }
 
         const salt = convertirDesdeBase64(usuario.passwordSalt);
+        const hashGuardado = convertirDesdeBase64(usuario.passwordHash);
+
+        if (
+            salt.length !== LONGITUD_SAL ||
+            hashGuardado.length !== LONGITUD_HASH_BYTES
+        ) {
+            return false;
+        }
 
         const hashCalculado = await generarHash(
             password,
@@ -141,13 +200,8 @@ export const verificarCredenciales = async (password, usuario) => {
             usuario.passwordIteraciones
         );
 
-        const hashGuardado = convertirDesdeBase64(usuario.passwordHash);
-
-        if (hashCalculado.length !== hashGuardado.length) {
-            return false;
-        }
-
-        // Compara todos los bytes sin detenerse en la primera diferencia.
+        // Compara todos los bytes sin detenerse
+        // en la primera diferencia.
         let diferencia = 0;
 
         for (let i = 0; i < hashCalculado.length; i++) {
@@ -155,36 +209,57 @@ export const verificarCredenciales = async (password, usuario) => {
         }
 
         return diferencia === 0;
+
     } catch (error) {
         console.error("Error al verificar las credenciales:", error);
         return false;
     }
 };
 
-// Guarda los datos públicos del usuario que inició sesión.
+// Devuelve únicamente los datos públicos del usuario.
+const obtenerDatosPublicos = (usuario) => {
+    if (!usuario) {
+        return null;
+    }
+
+    return {
+        id: usuario.id,
+        nombre: usuario.nombre || "",
+        apellido: usuario.apellido || "",
+        correo: usuario.correo || "",
+        telefono: usuario.telefono || "",
+        direccion: usuario.direccion || "",
+        rol: usuario.rol === "admin" ? "admin" : "cliente"
+    };
+};
+
+// Guarda la sesión del usuario.
 export const guardarSesion = (usuario) => {
     try {
-        const usuarioSeguro = {
-            id: usuario.id,
-            nombre: usuario.nombre,
-            apellido: usuario.apellido,
-            correo: usuario.correo,
-            telefono: usuario.telefono,
-            direccion: usuario.direccion
-        };
+        if (!usuario || usuario.id === undefined || usuario.id === null) {
+            return false;
+        }
 
-        localStorage.setItem(
-            "usuarioActivo",
-            JSON.stringify(usuarioSeguro)
+        // Comprobamos que el usuario exista en el registro.
+        const usuarioRegistrado = obtenerUsuarios().find(
+            item => Number(item.id) === Number(usuario.id)
         );
 
-        // Se conserva esta clave para compatibilidad con Perfil.jsx.
+        if (!usuarioRegistrado) {
+            return false;
+        }
+
+        // Solo guardamos el identificador de sesión.
+        // Los datos públicos se recuperan del registro actualizado.
         localStorage.setItem(
-            "usuario",
-            JSON.stringify(usuarioSeguro)
+            CLAVE_SESION,
+            JSON.stringify({ id: usuarioRegistrado.id })
         );
+
+        notificarCambioSesion();
 
         return true;
+
     } catch (error) {
         console.error("Error al guardar la sesión:", error);
         return false;
@@ -194,24 +269,87 @@ export const guardarSesion = (usuario) => {
 // Recupera el usuario que inició sesión.
 export const obtenerUsuarioActivo = () => {
     try {
-        const usuarioGuardado =
-            localStorage.getItem("usuarioActivo") ||
-            localStorage.getItem("usuario");
+        const sesionGuardada = localStorage.getItem(CLAVE_SESION);
 
-        if (!usuarioGuardado) {
+        if (!sesionGuardada) {
             return null;
         }
 
-        return JSON.parse(usuarioGuardado);
+        const sesion = JSON.parse(sesionGuardada);
+
+        if (sesion.id === undefined || sesion.id === null) {
+            return null;
+        }
+
+        const usuarioRegistrado = obtenerUsuarios().find(
+            usuario => Number(usuario.id) === Number(sesion.id)
+        );
+
+        if (!usuarioRegistrado) {
+            localStorage.removeItem(CLAVE_SESION);
+            return null;
+        }
+
+        return obtenerDatosPublicos(usuarioRegistrado);
+
     } catch (error) {
         console.error("Error al obtener la sesión:", error);
         return null;
     }
 };
 
+// Comprueba si existe una sesión de administrador.
+export const esAdministrador = () => {
+    const usuario = obtenerUsuarioActivo();
+
+    return Boolean(usuario && usuario.rol === "admin");
+};
+
+// Actualiza los datos públicos de un usuario sin modificar
+// su contraseña, su identificador ni su rol.
+export const actualizarDatosUsuario = (id, nuevosDatos) => {
+    try {
+        const usuarios = obtenerUsuarios();
+
+        const usuarioExiste = usuarios.some(
+            usuario => Number(usuario.id) === Number(id)
+        );
+
+        if (!usuarioExiste) {
+            return false;
+        }
+
+        const usuariosActualizados = usuarios.map(usuario => {
+            if (Number(usuario.id) !== Number(id)) {
+                return usuario;
+            }
+
+            return {
+                ...usuario,
+                nombre: nuevosDatos.nombre,
+                apellido: nuevosDatos.apellido,
+                correo: nuevosDatos.correo,
+                telefono: nuevosDatos.telefono,
+                direccion: nuevosDatos.direccion
+            };
+        });
+
+        return guardarUsuarios(usuariosActualizados);
+
+    } catch (error) {
+        console.error("Error al actualizar los datos del usuario:", error);
+        return false;
+    }
+};
+
 // Cierra la sesión actual.
 export const cerrarSesion = () => {
-    localStorage.removeItem("usuarioActivo");
-    localStorage.removeItem("usuario");
-    localStorage.removeItem("token");
+    try {
+        localStorage.removeItem("usuario");
+        localStorage.removeItem("token");
+        localStorage.removeItem(CLAVE_SESION);
+        notificarCambioSesion();
+    } catch (error) {
+        console.error("Error al cerrar la sesión:", error);
+    }
 };

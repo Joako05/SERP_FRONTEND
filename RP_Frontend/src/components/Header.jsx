@@ -1,7 +1,10 @@
 
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
-import { cerrarSesion } from "../data/Usuarios";
+import {
+    cerrarSesion as cerrarSesionUsuario,
+    obtenerUsuarioActivo
+} from "../data/Usuarios";
 
 class Header extends Component {
 
@@ -9,9 +12,35 @@ class Header extends Component {
         super(props);
 
         this.state = {
-            menuAbierto: false
+            menuAbierto: false,
+            usuario: null
         };
     }
+
+    // Comprobar la sesión al cargar el Header
+    componentDidMount() {
+        this.actualizarSesion();
+
+        window.addEventListener(
+            "sesionActualizada",
+            this.actualizarSesion
+        );
+    }
+
+    // Dejar de escuchar el evento al desmontar el componente
+    componentWillUnmount() {
+        window.removeEventListener(
+            "sesionActualizada",
+            this.actualizarSesion
+        );
+    }
+
+    // Actualizar el usuario cuando cambia la sesión
+    actualizarSesion = () => {
+        this.setState({
+            usuario: obtenerUsuarioActivo()
+        });
+    };
 
     // Abrir o cerrar el menú del usuario
     toggleMenu = () => {
@@ -28,12 +57,16 @@ class Header extends Component {
     };
 
     // Cerrar sesión
-    cerrarSesion = () => {
-        cerrarSesion();
+    manejarCerrarSesion = () => {
+        cerrarSesionUsuario();
         this.cerrarMenu();
     };
 
     render() {
+
+        const { usuario, menuAbierto } = this.state;
+
+        const esAdmin = usuario && usuario.rol === "admin";
 
         return (
             <header className="header-container">
@@ -88,7 +121,7 @@ class Header extends Component {
                             className="header-icon-button"
                             onClick={this.toggleMenu}
                             aria-label="Abrir menú de usuario"
-                            aria-expanded={this.state.menuAbierto}
+                            aria-expanded={menuAbierto}
                             aria-haspopup="true"
                         >
                             <svg
@@ -106,30 +139,67 @@ class Header extends Component {
                         </button>
 
                         {/* DESPLEGABLE */}
-                        {this.state.menuAbierto && (
+                        {menuAbierto && (
 
                             <div className="header-dropdown">
 
-                                <Link
-                                    to="/perfil"
-                                    onClick={this.cerrarMenu}
-                                >
-                                    Mi perfil
-                                </Link>
+                                {!usuario ? (
 
-                                <Link
-                                    to="/mispedidos"
-                                    onClick={this.cerrarMenu}
-                                >
-                                    Ver mis pedidos
-                                </Link>
+                                    <>
+                                        <Link
+                                            to="/login"
+                                            onClick={this.cerrarMenu}
+                                        >
+                                            Iniciar sesión
+                                        </Link>
 
-                                <Link
-                                    to="/login"
-                                    onClick={this.cerrarSesion}
-                                >
-                                    Cerrar sesión
-                                </Link>
+                                        <Link
+                                            to="/signup"
+                                            onClick={this.cerrarMenu}
+                                        >
+                                            Registrarte
+                                        </Link>
+                                    </>
+
+                                ) : (
+
+                                    <>
+
+                                        <Link
+                                            to="/perfil"
+                                            onClick={this.cerrarMenu}
+                                        >
+                                            Mi perfil
+                                        </Link>
+
+                                        <Link
+                                            to="/mispedidos"
+                                            onClick={this.cerrarMenu}
+                                        >
+                                            Ver mis pedidos
+                                        </Link>
+
+                                        {esAdmin && (
+
+                                            <Link
+                                                to="/paneladmin"
+                                                onClick={this.cerrarMenu}
+                                            >
+                                                Panel de administración
+                                            </Link>
+
+                                        )}
+
+                                        <Link
+                                            to="/login"
+                                            onClick={this.manejarCerrarSesion}
+                                        >
+                                            Cerrar sesión
+                                        </Link>
+
+                                    </>
+
+                                )}
 
                             </div>
 

@@ -7,7 +7,8 @@ import {
 } from "../data/Productos";
 import {
     obtenerUsuarios,
-    guardarUsuarios
+    guardarUsuarios,
+    obtenerUsuarioActivo
 } from "../data/Usuarios";
 import {
     obtenerPedidos,
@@ -542,16 +543,59 @@ guardarUsuario = (event) => {
 };
 
 eliminarUsuario = (id) => {
+
+    // Obtener el administrador que tiene la sesión activa
+    const usuarioActivo = obtenerUsuarioActivo();
+
+    // Evitar que elimine su propia cuenta
+    if (
+        usuarioActivo &&
+        String(usuarioActivo.id) === String(id)
+    ) {
+        window.alert(
+            "No podés eliminar tu propia cuenta mientras tengas la sesión activa."
+        );
+        return;
+    }
+
+    // Buscar el usuario que se quiere eliminar
+    const usuarioAEliminar = this.state.usuarios.find(
+        usuario => String(usuario.id) === String(id)
+    );
+
+    if (!usuarioAEliminar) {
+        window.alert("No se encontró el usuario seleccionado.");
+        return;
+    }
+
+    // Comprobar que no se elimine al último administrador
+    if (usuarioAEliminar.rol === "admin") {
+
+        const cantidadAdministradores = this.state.usuarios.filter(
+            usuario => usuario.rol === "admin"
+        ).length;
+
+        if (cantidadAdministradores <= 1) {
+            window.alert(
+                "No se puede eliminar al último administrador registrado."
+            );
+            return;
+        }
+    }
+
+    // Confirmar la eliminación
     const confirmar = window.confirm(
         "¿Estás seguro de que querés eliminar este usuario?"
     );
 
     if (!confirmar) return;
 
+    // Crear el nuevo listado sin el usuario eliminado
     const nuevosUsuarios = this.state.usuarios.filter(
-        usuario => usuario.id !== id
+        usuario => String(usuario.id) !== String(id)
     );
 
+    // Guardar los cambios
     const guardado = guardarUsuarios(nuevosUsuarios);
 
     if (!guardado) {
@@ -559,15 +603,21 @@ eliminarUsuario = (id) => {
         return;
     }
 
+    // Actualizar el estado del panel
     this.setState({
         usuarios: nuevosUsuarios
     });
 
-    if (this.state.usuarioEditandoId === id) {
+    // Cerrar el formulario si se estaba editando ese usuario
+    if (
+        this.state.usuarioEditandoId !== null &&
+        String(this.state.usuarioEditandoId) === String(id)
+    ) {
         this.cerrarFormularioUsuario();
     }
-};
 
+    window.alert("El usuario se eliminó correctamente.");
+};
 
 
 
@@ -742,11 +792,18 @@ renderUsuarios() {
                                 key={usuario.id}
                             >
                                 <div className="admin-user-name">
-                                    <strong>
-                                        {usuario.nombre} {usuario.apellido}
-                                    </strong>
-                                    <small>ID: {usuario.id}</small>
-                                </div>
+                            <strong>
+                                {usuario.nombre} {usuario.apellido}
+                            </strong>
+
+                            <small>ID: {usuario.id}</small>
+
+                            <small>
+                                Rol: {usuario.rol === "admin"
+                                    ? "Administrador"
+                                    : "Cliente"}
+                            </small>
+                        </div>
 
                                 <span>{usuario.correo}</span>
 
